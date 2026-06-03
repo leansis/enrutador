@@ -1,0 +1,3109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ENRUTADOR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+
+
+/* Contenedor del Rectángulo de Fondo */
+        .rectangulo-fondo {
+            /* Color verde amarillento vibrante como en la imagen 3 */
+            background-color: #dfe4ea; 
+            padding: 20px 60px; /* Espaciado interno para dar aire al texto */
+            border-radius: 10px; /* Bordes ligeramente redondeados (opcional, quitar si se prefiere cuadrado) */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra suave para profundidad */
+        }
+
+.logo-letras, .rectangulo-fondo {
+    margin-bottom: 5px !important; /* Ajusta a 0 o 5px según prefieras */
+    padding-bottom: 0 !important;
+}
+/* LOGO DE EMPRESA */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
+/* LOGO DE EMPRESA */
+
+.logo-letras {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8rem;
+    font-weight: 900;
+    color: white;
+    text-transform: lowercase;
+    letter-spacing: -5px;
+    display: inline-block; /* Necesario para que el transform funcione */
+    /* INCLINACIÓN INTEGRADA */
+    transform: skewX(-12deg); 
+    /* BORDE FINO NEGRO */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+    margin-bottom: 40px;
+}
+
+
+
+
+
+
+.rem-bloqueado {
+    background-color: #ff7675 !important; /* Rojo */
+    color: white !important;
+    border: 1px solid #d63031 !important;
+    opacity: 0.8;
+}
+
+            .viaje-header { 
+                transition: background 0.2s; 
+            }
+            
+
+
+        :root { --primary: #4A90E2; --success: #27AE60; --bg: #F4F7F6; --dark: #2c3e50; --danger: #e74c3c; --warning: #f1c40f; --info: #3498db; --retorno: #9b59b6; }
+/* MODIFICACIÓN: Permitimos scroll en el cuerpo para poder bajar al resumen */
+html, body { 
+    height: 100%; 
+    width: 100%; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Segoe UI', sans-serif; 
+    background: var(--bg); 
+    overflow-y: auto; /* Cambiado de hidden a auto para permitir scroll general */
+}
+
+        #pantalla-inicio { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #dfe4ea; }
+        .container-upload { display: flex; gap: 20px; margin-bottom: 30px; }
+        .card-btn { background: white; width: 200px; height: 140px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid transparent; }
+        .card-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .card-btn i { font-size: 2em; color: var(--dark); margin-bottom: 10px; }
+
+                .card-btn span {
+            font-size: 1.2em;       /* Tamaño de la letra */
+            font-weight: 900;      /* Grosor (900 es el máximo, muy negrita) */
+            color: var(--dark);    /* Color del texto */
+            text-transform: uppercase; /* Asegura que esté en mayúsculas */
+            letter-spacing: 1px;   /* Espaciado entre letras para que respire más */
+            font-family: 'Arial Black', sans-serif; /* Puedes forzar una fuente más robusta */
+        }
+
+
+header { 
+    background: white; 
+    height: 60px; 
+    display: flex; 
+    align-items: center; 
+    padding: 0 15px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    
+    /* ESTAS DOS LÍNEAS SON LAS QUE LO DEJAN FIJO */
+    position: sticky; 
+    top: 0; 
+    
+    z-index: 1000; /* Asegura que pase por encima de todo al hacer scroll */
+}
+
+
+        .header-grid { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px; }
+        .btn-header { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.75em; }
+        
+        .search-box { position: relative; display: flex; align-items: center; }
+        .search-box input { padding: 8px 10px 8px 35px; border: 2px solid var(--dark); border-radius: 6px; width: 150px; font-size: 0.85em; }
+        .search-box i { position: absolute; left: 12px; }
+
+/* MODIFICACIÓN: La app ya no está limitada al alto de la pantalla */
+.main-app { 
+    display: flex; 
+    min-height: calc(100vh - 60px); /* Ocupa al menos el alto de la pantalla */
+    width: 100%; 
+}        
+
+
+#pool-side { width: 18%; background: #1e272e; border-right: 2px solid #000; display: flex; flex-direction: column; }
+
+
+
+/* MODIFICACIÓN: El contenedor central ahora permite que su contenido (flota) 
+   empuje al resumen hacia abajo */
+#content-center { 
+    width: 72%; 
+    display: flex; 
+    flex-direction: column; 
+    background: #ced6e0; 
+    border-right: 2px solid #000;
+    height: auto; /* Quitamos la restricción de altura */
+}
+
+/* MODIFICACIÓN: Hacemos que los laterales (Pool y Conductores) se queden fijos 
+   mientras haces scroll para ver los camiones (opcional, muy recomendado) */
+#pool-side, #pool-cond-side {
+    position: sticky;
+    top: 60px; /* Debajo del header */
+    height: calc(100vh - 60px);
+}
+
+
+        #pool-cond-side { width: 10%; background: #2f3542; display: flex; flex-direction: column; }
+
+        .pool-title { background: #000; color: white; font-weight: bold; font-size: 0.75em; padding: 3px; text-align: center; text-transform: uppercase; }
+        .pool-header-fam { display: table; width: 100%; table-layout: fixed; background: #34495e; color: white; font-size: 0.65em; font-weight: bold; border-bottom: 1px solid #000; }
+        .pool-header-fam div { display: table-cell; padding: 4px 2px; text-align: center; }
+        .h-info { width: 55%; text-align: left !important; padding-left: 5px !important; }
+
+        #pool-list, #pool-cond-list, #pool-rem-list, #pool-retorno-list { flex: 1; overflow-y: auto; padding: 4px; border-bottom: 2px solid #444; }
+        #pool-retorno-list { height: 200px; flex: none; }
+
+        .tabla-tienda, .tabla-retorno { width: 100%; border-collapse: collapse; font-size: 0.65em; table-layout: fixed; margin-bottom: 2px; background: white; border: 1px solid rgba(0,0,0,0.2); }
+        .tabla-tienda td, .tabla-retorno td { padding: 3px 2px; text-align: center; border-right: 1px solid rgba(0,0,0,0.1); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .col-info { width: 55%; text-align: left !important; padding-left: 5px !important; font-weight: bold; cursor: grab; font-size: 1.1em;}
+        .col-fam { width: 15%; font-weight: 900; cursor: grab; }
+        .fecha-label { font-size: 1.05em; font-weight: normal; color: inherit; opacity: 0.8; display: block; }
+         
+        /* MODIFICACIÓN: Quitamos el flex:1 para que la zona de flota se estire 
+   según la cantidad de camiones que haya */
+#flota-zone { 
+    padding: 10px; 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+    gap: 10px; 
+    align-content: start;
+    overflow-y: visible; /* Importante para que no cree su propio scroll interno */
+}
+
+
+        .camion-card { background: white; border-radius: 6px; padding: 6px; border-top: 5px solid #2f3542; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+      
+      
+       /* --- NUEVO ESTILO PARA CAMIÓN NO DISPONIBLE --- */
+      .camion-card.no-disp {
+                              /* Combinamos el fondo rojo con el entramado de líneas diagonales negras */
+                              background: 
+                                  repeating-linear-gradient(
+                                      45deg,                   /* Ángulo de las líneas: 45 grados */
+                                      rgba(0, 0, 0, 0.15),      /* Negro muy suave (transparente) al inicio */
+                                      rgba(0, 0, 0, 0.15) 10px, /* Mantiene el negro suave hasta 10px */
+                                      transparent 10px,         /* Cambia a transparente (se ve el rojo de abajo) */
+                                      transparent 20px          /* Mantiene transparente hasta 20px, creando el hueco */
+                                  ),
+                                  #FF0000 !important;           /* Fondo ROJO base */
+
+                              /* Mantenemos el borde rojo grueso */
+                              border: 3px solid #ff0000 !important; 
+
+                              /* Subimos un poco la opacidad para que el entramado sea nítido */
+                              opacity: 0.9; 
+                              
+                              /* Pequeña sombra para darle relieve al entramado */
+                              box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                          } 
+
+
+
+        .camion-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 5px; border-bottom: 1px solid #eee; margin-bottom: 5px; }
+        .header-left { display: flex; align-items: center; gap: 2px; }
+        .mat-badge { padding: 2px 6px; border-radius: 4px 0 0 4px; font-weight: 900; font-size: 0.85em; min-width: 80px; text-align: center; }
+        .emp-badge { padding: 2px 6px; border-radius: 0 4px 4px 0; font-weight: bold; font-size: 0.75em; text-transform: uppercase; }
+
+                .btn-add-inline { 
+                    background: #000; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 4px; 
+                    /* Cambia estos valores */
+                    width: 25px;      /* Antes 20px */
+                    height: 25px;     /* Antes 20px */
+                    font-size: 1.5em; /* Aumenta el tamaño del símbolo + */
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background 0.2s;
+                }
+
+
+        .viaje-container { margin-top: 4px; border: 1px solid #999; border-radius: 4px; background: #f8f9fa; }
+        .viaje-header { font-size: 0.65em; font-weight: bold; display: flex; align-items: center; background: #dfe4ea; padding: 2px 5px; gap: 3px; }
+        .v-label { min-width: 70px; background: #2c3e50; color: white; padding: 2px 4px; border-radius: 3px; text-align: center; }
+        .drop-box { flex: 1; height: 80%; border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: white; overflow: hidden; }
+        .badge-asig { color: white; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9em; }
+        .btn-edit-v { cursor: pointer; color: #2c3e50; font-size: 1.8em; padding: 0 2px; }
+        .btn-edit-v:hover { color: var(--primary); }
+
+        .drop-zone { min-height: 30px; padding: 2px; }
+        .pool-item { margin-bottom: 4px; padding: 6px; border-radius: 4px; font-size: 0.9em; font-weight: bold; cursor: grab; display: flex; justify-content: space-between; }
+        .cond-item { background: var(--warning); }
+        .rem-item { background: var(--info); color: white; }
+        .inactivo { background: var(--danger) !important; color: white !important; opacity: 0.8; cursor: not-allowed !important; }
+        
+
+/* MODIFICACIÓN: El resumen ahora aparece al final, debajo de todo */
+#resumen-contenedor { 
+    height: auto; /* Que crezca según la tabla */
+    min-height: 150px;
+    background: white; 
+    padding: 20px; 
+    border-top: 4px solid #2c3e50; 
+    width: 90%; /* Ahora puede ser más ancho al estar abajo */
+    margin: 40px auto; /* Separación de los camiones y centrado */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+}
+
+
+        .tabla-resumen { font-size: 0.7em; border-collapse: collapse; width: 100%; }
+        .tabla-resumen th { background: #2c3e50; color: white; position: sticky; top: 0; }
+        .tabla-resumen td { border: 1px solid #ddd; padding: 2px; text-align: center; }
+        
+        .resaltado-busqueda { border: 3px solid var(--warning) !important; }
+
+        #modal-edit { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; justify-content:center; align-items:center; }
+        .modal-content { background:white; padding:20px; border-radius:8px; width:80%; max-width:600px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { font-weight:bold; margin-bottom:15px; border-bottom:2px solid #eee; padding-bottom:5px; display:flex; justify-content:space-between; }
+
+ 
+
+
+        .tabla-edit { width:100%; border-collapse:collapse; margin-bottom:15px; }
+        .tabla-edit th, .tabla-edit td { border:1px solid #ccc; padding:8px; text-align:center; }
+        .tabla-edit input { width:50px; text-align:center; padding:3px; }
+        .btn-guardar { background:var(--success); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold; width:100%; }
+    </style>
+</head>
+
+
+
+
+<body>
+
+    <div id="pantalla-inicio">
+        <div class="rectangulo-fondo" style="margin-bottom: 0;">
+            <h1 class="logo-letras" style="margin: 0;">masymas</h1>
+        </div>
+        <h1 style="font-size: 7rem; font-weight: 900; color: #2c3e50; margin-top: -20px; margin-bottom: 40px; font-family: 'Arial Black', sans-serif; text-shadow: 2px 2px 10px rgba(0,0,0,0.1); letter-spacing: 5px;"> ENRUTADOR </h1>  
+
+        <div class="container-upload">
+            <div class="card-btn" onclick="document.getElementById('in-t').click()"><i class="fas fa-file-invoice"></i><span>Necesidades</span><div id="txt-t" class="info-carga"></div><input type="file" id="in-t" hidden accept=".xlsx, .xls"></div>
+            <div class="card-btn" onclick="document.getElementById('in-f').click()"><i class="fas fa-truck-loading"></i><span>Flota</span><div id="txt-f" class="info-carga"></div><input type="file" id="in-f" hidden accept=".xlsx, .xls"></div>
+            <div class="card-btn" onclick="document.getElementById('in-r').click()"><i class="fas fa-exclamation-triangle"></i><span>Restricciones</span><div id="txt-r" class="info-carga"></div><input type="file" id="in-r" hidden accept=".xlsx, .xls"></div>
+        </div>
+        <button onclick="irPlanificar()" 
+        style="padding:15px 70px; background:#2c3e50; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:900; 
+           font-size:1.4em; text-transform:uppercase; letter-spacing:2px; font-family:'Arial Black', sans-serif;"> ENTRAR AL PLANIFICADOR </button>
+
+        <p style="font-size: 1.1em; margin-top: 10px;">23-abr-2026</p>
+    </div>
+
+
+
+
+
+
+    <div id="pantalla-planificacion" style="display:none;">
+        <header>
+            <div class="header-grid">
+                <button onclick="location.reload()" class="btn-header"><i class="fas fa-home"></i> INICIO</button>  
+                
+                <div id="cronometro-planificacion" style="font-family: monospace; font-size: 1.2em; font-weight: bold; color: #333; min-width: 85px;">
+                    00:00:00
+                </div>
+                
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" id="filtro-nombre" placeholder="Tienda, Matrícula o Fecha..." oninput="dibujar()"></div>
+
+                <button class="btn-header" onclick="NuevoConductor()" style="background-color: #3498db; color: white; font-weight: bold;">    
+                       <span style="margin-right: 2px;">+</span><i class="fas fa-user"></i>
+                </button>
+
+                <button onclick="añadirRemolqueManual()" class="btn-header" style="background-color: #f39c12; color: white; font-weight: bold;">+REM</button>
+                  
+           
+                <button onclick="NuevoCamion()" class="btn-header" style="background: #8B4513; color: white;">      <i class="fas fa-plus"></i> <i class="fas fa-truck"></i>
+                </button> 
+
+                <button onclick="document.getElementById('input-excel-rutas').click()" class="btn-header" style="background:#8e44ad; color:white;">
+                    <i class="fas fa-plus-circle"></i> AÑADIR TIENDAS  </button>
+                <input type="file" id="input-excel-rutas" style="display:none" accept=".xlsx, .xls" onchange="importarNuevasRutas(event)">
+
+                <button onclick="confirmarPropuesta()" class="btn-header" style="background:#27ae60; color:white;"><i class="fas fa-magic"></i> AUTO TIENDAS</button>
+                
+                <button id="btn-toggle-todos" onclick="toggleTodosLosViajes()" class="btn-header" style="background:#34495e; color:white;">
+                    <i class="fas fa-eye-slash"></i> OCULTAR TODO        </button>
+                
+                <button onclick="vaciarTodo()" class="btn-header" style="background:#D3D3D3; color:Black;"><i class="fas fa-trash"></i> VACIAR</button>
+                
+                <div id="btn-sin-conductor" style="background:#000000; color:white; padding:6px 12px; border-radius:4px; font-size:0.8em; font-weight:bold;">0 SIN COND.</div>
+                <div id="btn-sobrecapacidad" style="background:#000000; color:white; padding:6px 12px; border-radius:4px; font-size:0.8em; font-weight:bold;">0 SOBRECAP.</div>
+                
+                <div id="btn-aire-total" style="background:#FFFFFF; color:black; padding:6px 12px; border-radius:4px; font-size:0.8em;">ESPAC. DISP: 0.0</div>
+                <div id="msg-pendientes" style="background:#FFFFFF; color:black; padding:6px 12px; border-radius:4px; font-size:0.8em;">0.0 Pend.</div>
+                <button onclick="exportarExcel()" class="btn-header" style="background:#3498db; color:white;"><i class="fas fa-download"></i> EXPORTAR</button>
+            </div>
+        </header>
+
+
+
+
+
+        <div class="main-app">
+            <div id="pool-side" ondrop="dropDevolverPool(event)" ondragover="allow(event)">
+                <div class="pool-title">TIENDAS</div>
+                <div class="pool-header-fam"><div class="h-info">TIENDA / FECHA</div><div>SEC</div><div>CHA</div><div>FyV</div></div>
+                <div id="pool-list"></div>
+                <div class="pool-title">RETORNOS</div>
+                <div id="pool-retorno-list"></div>
+            </div>
+            <div id="content-center">
+                <div id="flota-zone"></div>
+                <div id="resumen-contenedor">
+                    <table class="tabla-resumen" id="tabla-resumen-dinamica"></table>
+                </div>
+            </div>
+            <div id="pool-cond-side">
+                <div class="pool-title">CONDUCTORES</div>
+                <div id="pool-cond-list"></div>
+                <div class="pool-title">REMOLQUES</div>
+                <div id="pool-rem-list"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="modal-edit">
+        <div class="modal-content">
+            <div class="modal-header"><span id="modal-titulo">Editar Viaje</span> <i class="fas fa-times" onclick="cerrarModal()" style="cursor:pointer"></i></div>
+            <div id="modal-body"></div>
+            <button class="btn-guardar" onclick="guardarREDUCIR()">GUARDAR</button>
+        </div>
+    </div>
+
+
+
+
+        <div id="modal-nuevo-camion" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+            
+                   <div style="background:white; padding:20px; border-radius:8px; width:300px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                         <h3 style="margin-top:0;">Nuevo Camión</h3>
+                  <label style="display:block; margin-bottom:5px;">Matrícula:</label>
+
+                <input type="text" id="new-mat" 
+                style="width:100%; margin-bottom:15px; padding:5px; box-sizing:border-box; text-transform: uppercase;" 
+                placeholder="Ej: 1234ABC" 
+                oninput="this.value = this.value.toUpperCase()"
+                required>                
+
+                <label style="display:block; margin-bottom:5px;">Capacidad (Palets):</label>
+                <input type="number" id="new-cap" step="0.5" min="0"  style="width:100%; margin-bottom:15px; padding:5px; box-sizing:border-box;"   
+                 placeholder="Ej: 33.5" required>
+
+                <label style="display:block; margin-bottom:5px;">Empresa:</label>
+                <input type="text" id="new-emp" 
+                style="width:100%; margin-bottom:20px; padding:5px; box-sizing:border-box; text-transform: uppercase;" 
+                placeholder="Ej: LOGÍSTICA X" 
+                oninput="this.value = this.value.toUpperCase()"
+                required>
+                
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button onclick="cerrarModalNuevoCamion()" style="padding:8px 15px; cursor:pointer; background:#ccc; border:none; border-radius:4px;">CANCELAR</button>
+                    <button onclick="guardarNuevoCamion()" style="padding:8px 15px; cursor:pointer; background:#27ae60; color:white; border:none; border-radius:4px;">ACEPTAR</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+   <div id="modal-confirmar-cambios" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+    <div style="background: white; padding: 25px; border-radius: 12px; max-width: 900px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
+        
+        <h3 style="color:#2c3e50; margin-top:0; display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-list-check"></i> Resumen de Carga de Pedidos
+        </h3>
+        <p style="color:#555; font-size: 1.05em;">Se han detectado los siguientes movimientos para procesar:</p>
+        
+        <div id="tabla-cambios-container" style="margin: 20px 0;">
+        </div>
+
+        <div style="text-align:right; display:flex; justify-content:flex-end; gap:15px;">
+            <button onclick="cerrarModalCambios()" style="padding:10px 20px; border-radius:6px; border:1px solid #ccc; cursor:pointer; font-weight:bold;">CANCELAR</button>
+            <button onclick="procesarCargaFinal()" style="padding:10px 25px; border-radius:6px; border:none; background:#27ae60; color:white; cursor:pointer; font-weight:bold; text-transform:uppercase;">CONFIRMAR Y CARGAR</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script>
+        let rawTiendas = [], rawRetornos = [], rawFlota = [], rawRestricciones = [], rawConductores = [], rawRemolques = [];
+        let asignaciones = {}, estilosZonas = {}, coloresEmpresas = {};
+        let editCurrent = { mat: '', vIdx: -1 };
+
+        function normalizar(t) { return t ? t.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : ''; }
+
+        function formatFechaExcel(val) {
+            if (!val) return "";
+            if (typeof val === 'number') {
+                const date = new Date((val - 25569) * 86400 * 1000);
+                return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+            }
+            return val.toString();
+        }
+
+
+
+
+                                function procesar(e, tipo) {
+                                const reader = new FileReader();
+                                reader.onload = (evt) => {
+                                    const data = new Uint8Array(evt.target.result);
+                                    const workbook = XLSX.read(data, { type: 'array' });
+                                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                                    const range = XLSX.utils.decode_range(sheet['!ref']);
+
+                                    if (tipo === 'T') {
+                                        rawTiendas = []; rawRetornos = [];
+                                        for (let r = range.s.r + 1; r <= range.e.r; r++) {
+                                            let cA = sheet[XLSX.utils.encode_cell({ r: r, c: 0 })],
+                                                cB = sheet[XLSX.utils.encode_cell({ r: r, c: 1 })],
+                                                cC = sheet[XLSX.utils.encode_cell({ r: r, c: 2 })],
+                                                cD = sheet[XLSX.utils.encode_cell({ r: r, c: 3 })],
+                                                cE = sheet[XLSX.utils.encode_cell({ r: r, c: 4 })],
+                                                cF = sheet[XLSX.utils.encode_cell({ r: r, c: 5 })],
+                                                cG = sheet[XLSX.utils.encode_cell({ r: r, c: 6 })],
+                                                cM = sheet[XLSX.utils.encode_cell({ r: r, c: 12 })],
+                                                cN = sheet[XLSX.utils.encode_cell({ r: r, c: 13 })],
+                                                cO = sheet[XLSX.utils.encode_cell({ r: r, c: 14 })];
+
+                                            if (cA && cA.v) {
+                                                rawTiendas.push({
+                                                    id: Math.random().toString(36).substr(2, 9),
+                                                    codigo: cA.v.toString().trim(),
+                                                    nombre: cB ? cB.v.toString().trim() : "",
+                                                    nombreNorm: normalizar(cB ? cB.v : ""),
+                                                    
+                                                    // 1. VALORES EDITABLES (Los que cambian en el editor)
+                                                    S: cC ? parseFloat(cC.v) : 0,
+                                                    C: cD ? parseFloat(cD.v) : 0,
+                                                    F: cE ? parseFloat(cE.v) : 0,
+
+                                                    // 2. VALORES ORIGINALES (El "ancla" para el asterisco)
+                                                    // He cambiado origS/C/F por estos nombres para que los reconozca
+                                                    seco_original: cC ? parseFloat(cC.v) : 0,
+                                                    charcu_original: cD ? parseFloat(cD.v) : 0,
+                                                    fyv_original: cE ? parseFloat(cE.v) : 0,
+
+                                                    fecha: cF ? formatFechaExcel(cF.v) : "S/F",
+                                                    zona: cG ? cG.v.toString().toUpperCase().trim() : "S/Z"
+                                                });
+                                            }
+
+                                            if (cM && cM.v) {
+                                                rawRetornos.push({
+                                                    id: Math.random().toString(36).substr(2, 9),
+                                                    proveedor: cM.v.toString().trim(),
+                                                    pedido: cN ? cN.v.toString().trim() : "---",
+                                                    palets: cO ? parseFloat(cO.v) : 0
+                                                });
+                                            }
+                                        }
+                                       // PALETA DE COLORES PARA LAS TIENDAS
+
+                                          
+                                              const estilosZonasFijos = {
+                                                  "MURCIA":      { bg: "#3399FF", tx: "#FFF" }, // Azul
+                                                  "VALENCIA":    { bg: "#FF9999", tx: "#000" }, // Rojo pálido
+                                                  "ALICANTE":    { bg: "#FF9900", tx: "#000" }, // Naranja
+                                                  "CASTELLON":   { bg: "#00FF99", tx: "#000" }, // Verde Lima
+                                                  "NOCTURNA":    { bg: "#808080", tx: "#FFF" }, // Gris
+                                                  "NORTE":       { bg: "#000000", tx: "#FFF" }, // Negro
+                                                  "SAN VICENTE": { bg: "#FF00FF", tx: "#FFF" }, // Rosa
+                                                  "ALCOY":       { bg: "#FFFFFF", tx: "#000" }  // Blanco con letras negras
+                                              };
+
+                                                                                 
+
+                                          rawTiendas.forEach(t => {
+                                              const zonaUpper = t.zona.toUpperCase();
+                                              estilosZonas[t.zona] = estilosZonasFijos[zonaUpper] || { bg: "#00FFFF", tx: "#333" };
+                                          });
+
+                                          document.getElementById('txt-t').innerText = rawTiendas.length + " Tiend.";
+
+
+                                        //[...new Set(rawTiendas.map(t => t.zona))].sort().forEach((z, i) => estilosZonas[z] = paleta[i % paleta.length]);
+                                        //document.getElementById('txt-t').innerText = rawTiendas.length + " Tiend.";
+                                    }
+                                    else if (tipo === 'F') {
+                                        rawFlota = []; rawConductores = []; rawRemolques = [];
+                                        const pEmp = ["#3498db", "#9b59b6", "#1abc9c", "#34495e", "#d35400", "#c0392b", "#27ae60"];
+                                        let cIdx = 0;
+                                        for (let r = range.s.r + 1; r <= range.e.r; r++) {
+                                            let cA = sheet[XLSX.utils.encode_cell({ r: r, c: 0 })],
+                                                cB = sheet[XLSX.utils.encode_cell({ r: r, c: 1 })],
+                                                cC = sheet[XLSX.utils.encode_cell({ r: r, c: 2 })],
+                                                cD = sheet[XLSX.utils.encode_cell({ r: r, c: 3 })],
+                                                cF = sheet[XLSX.utils.encode_cell({ r: r, c: 5 })],
+                                                cG = sheet[XLSX.utils.encode_cell({ r: r, c: 6 })],
+                                                cK = sheet[XLSX.utils.encode_cell({ r: r, c: 10 })],
+                                                cL = sheet[XLSX.utils.encode_cell({ r: r, c: 11 })],
+                                                cM_Rem = sheet[XLSX.utils.encode_cell({ r: r, c: 12 })];
+
+                                            if (cA && cA.v && r > range.s.r) {
+                                                let m = cA.v.toString().trim(), emp = cB ? cB.v.toString().toUpperCase().trim() : "OTROS", est = cD ? cD.v.toString().toUpperCase().trim() : "DISP";
+                                                if (!coloresEmpresas[emp]) { coloresEmpresas[emp] = { bg: pEmp[cIdx % pEmp.length], tx: "#fff" }; cIdx++; }
+                                                rawFlota.push({ matricula: m, empresa: emp, capacidad: cC ? parseFloat(cC.v) : 0, estado: est });
+                                                if (!asignaciones[m]) asignaciones[m] = [{ c: "", r: "", capR: 0, t: [], ret: [] }, { c: "", r: "", capR: 0, t: [], ret: [] }, { c: "", r: "", capR: 0, t: [], ret: [] }];
+                                            }
+                                            if (cF && cF.v && cF.v !== "F") {
+                                                let n = cF.v.toString().trim(), st = cG ? cG.v.toString().toUpperCase().trim() : "ALTA";
+                                                if (!rawConductores.find(x => x.nombre === n)) rawConductores.push({ nombre: n, estado: st });
+                                            }
+                                            if (cK && cK.v && cK.v !== "REMOLQUE") {
+                                                let codR = cK.v.toString().trim();
+                                                let capR = cL ? parseFloat(cL.v) : 0;
+                                                let estR = cM_Rem ? cM_Rem.v.toString().toUpperCase().trim() : "DISP";
+                                                if (!rawRemolques.find(x => x.codigo === codR)) {
+                                                    rawRemolques.push({ codigo: codR, capacidad: capR, estado: estR });
+                                                }
+                                            }
+                                        }
+                                        document.getElementById('txt-f').innerText = rawFlota.length + " Cam.";
+                                    }
+                                    else if (tipo === 'R') {
+                                        const json = XLSX.utils.sheet_to_json(sheet);
+                                        rawRestricciones = json.map(i => [normalizar(Object.values(i)[0]), normalizar(Object.values(i)[1])]);
+                                        document.getElementById('txt-r').innerText = rawRestricciones.length + " Rest.";
+                                    }
+                                };
+                                reader.readAsArrayBuffer(e.target.files[0]);
+                            }
+
+
+
+
+
+
+
+
+
+        document.getElementById('in-t').onchange = e => procesar(e, 'T');
+        document.getElementById('in-f').onchange = e => procesar(e, 'F');
+        document.getElementById('in-r').onchange = e => procesar(e, 'R');
+
+
+
+let tiempoInicio;
+let intervaloCronometro;
+
+function iniciarCronometro() {
+    // CAMBIO 1: Siempre limpiar antes de empezar para evitar duplicados "zombies"
+    if (intervaloCronometro) clearInterval(intervaloCronometro);
+
+    // Solo fijamos el tiempo de inicio la primera vez
+    // Si quieres que el cronómetro NO se resetee al volver a entrar:
+    if (!tiempoInicio) tiempoInicio = Date.now();
+    
+    intervaloCronometro = setInterval(() => {
+        const el = document.getElementById('cronometro-planificacion');
+        // CAMBIO 2: Verificar que el elemento existe antes de escribir
+        // Si el usuario cambió de pantalla y el div no existe, no hacemos nada
+        if (!el) return; 
+
+        const ahora = Date.now();
+        const diferencia = ahora - tiempoInicio;
+
+        const horas = Math.floor(diferencia / 3600000);
+        const minutos = Math.floor((diferencia % 3600000) / 60000);
+        const segundos = Math.floor((diferencia % 60000) / 1000);
+
+        const hh = String(horas).padStart(2, '0');
+        const mm = String(minutos).padStart(2, '0');
+        const ss = String(segundos).padStart(2, '0');
+
+        el.innerText = `${hh}:${mm}:${ss}`;
+    }, 1000);
+}
+
+
+
+function irPlanificar() { 
+    if(!rawTiendas.length || !rawFlota.length) return alert("Cargue archivos"); 
+    
+    document.getElementById('pantalla-inicio').style.display = 'none'; 
+    document.getElementById('pantalla-planificacion').style.display = 'block'; 
+    
+    dibujar(); 
+    
+    // Pegamos aquí la activación del cronómetro
+    iniciarCronometro();
+}
+
+
+
+
+
+function renderTablaTienda(t, context, isSearch, mat = "", vIdx = null) {
+    console.log(`Dentro de rendertablatienda()`);
+
+    const est = estilosZonas[t.zona] || {bg:"#fff", tx:"#000"};
+    const table = document.createElement('table'); 
+    table.className = 'tabla-tienda' + (isSearch ? ' resaltado-busqueda' : '');
+    table.style.backgroundColor = est.bg; 
+    table.style.color = est.tx; 
+    
+    if (context !== 'POOL') {
+        table.style.fontSize = "0.7em"; 
+        table.style.fontWeight = "bold"; 
+    }
+
+    const tieneFechaDistinta = rawTiendas.some(x => x.codigo === t.codigo && x.fecha !== t.fecha);
+    const avisoFecha = tieneFechaDistinta ? '<b style="color:red; margin-left:4px; font-size:1.3em; vertical-align:middle;">(!)</b>' : '';
+    
+    const esFavorito = t.favorito === true;
+    const colorRelleno = esFavorito ? '#FFFF00' : 'white'; 
+    const estrellaHtml = `
+        <div class="estrella-t" 
+             style="width: 20px; height: 20px; cursor: pointer; display: inline-block; margin-right: 8px; vertical-align: middle;"
+             onclick="toggleFavorito(event, '${t.id}', ${context !== 'POOL'}, '${mat}', ${vIdx})">
+             <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <polygon points="50 3, 64 39, 100 39, 71 61, 82 97, 50 74, 18 97, 29 61, 0 39, 36 39" 
+                    fill="${colorRelleno}" stroke="black" stroke-width="2.5" stroke-linejoin="round" />
+             </svg>
+        </div>`;
+
+    const tr = document.createElement('tr');
+    const tdInfo = document.createElement('td'); 
+    tdInfo.className = 'col-info';
+    tdInfo.innerHTML = `${estrellaHtml} [${t.codigo}] ${t.nombre}<span class="fecha-label">${t.fecha}${avisoFecha}</span>`;
+    
+    tdInfo.draggable = true; 
+
+    if (context === 'POOL') {
+        tdInfo.style.cursor = "grab";
+        // BORRADO onmousedown y onmouseup que abrían el modal
+    } else {
+        tdInfo.style.cursor = "pointer";
+        tdInfo.onclick = (e) => {
+            if (e.target.closest('.estrella-t')) return;
+            console.log(`%c [Acción] Tienda al pool ENTERA-> [${t.codigo}] ${t.nombre}`, "color: #e67e22; font-weight: bold;");
+            e.stopPropagation();
+            ['S','C','F'].forEach(f => devolverItem(t.id, f, mat, vIdx));
+            dibujar();
+        };
+    }
+    
+    tdInfo.ondragstart = e => { 
+                                
+        console.log(`%c [Drag Start] TIENDA: [${t.codigo}] ${t.nombre}`, "color: #2ecc71; font-weight: bold; border: 1px solid #2ecc71; padding: 2px 5px; border-radius: 3px;");
+        e.stopPropagation(); 
+        e.dataTransfer.setData("tipo", "TIENDA_FULL"); 
+        e.dataTransfer.setData("id", String(t.id)); 
+        e.dataTransfer.setData("origen", context === 'POOL' ? 'POOL' : 'CAMION');
+        e.dataTransfer.setData("matOrigen", mat);
+        e.dataTransfer.setData("vIdxOrigen", vIdx);
+        setTimeout(() => { table.style.opacity = "0.5"; }, 0);
+    };
+
+    tdInfo.ondragend = () => { table.style.opacity = "1"; };
+    tr.appendChild(tdInfo);
+
+    ['S','C','F'].forEach(f => {
+        const td = document.createElement('td'); 
+        td.className = 'col-fam';
+        let v = 0;
+        if(context === 'POOL') v = t[f]; 
+        else { 
+            const found = context.find(it => it.idT === t.id && it.f === f); 
+            if(found) v = found.p; 
+        }
+
+        if(v > 0) {
+            td.innerText = v.toFixed(1); 
+            td.draggable = true;
+            td.ondragstart = e => { 
+                console.log(`%c [Drag Start] FAMILIA ${f}: [${t.codigo}] ${t.nombre}`, "color: #27ae60; font-weight: bold;  border: 1px solid #27ae60; padding: 2px 5px; border-radius: 3px;");
+                e.stopPropagation();
+                e.dataTransfer.setData("tipo", "TIENDA"); 
+                e.dataTransfer.setData("id", String(t.id)); 
+                e.dataTransfer.setData("fam", f); 
+                e.dataTransfer.setData("origen", context === 'POOL' ? 'POOL' : 'CAMION');
+                e.dataTransfer.setData("matOrigen", mat);
+                e.dataTransfer.setData("vIdxOrigen", vIdx);
+            };
+
+            if(context !== 'POOL') {
+                td.style.cursor = "pointer";
+                td.onclick = (e) => { 
+                    console.log(   `%c [Acción] Devolviendo familia ${f} -> ${t.codigo} - ${t.nombre}`,"color: #d35400; font-weight: bold;");
+                    e.stopPropagation();
+                    devolverItem(t.id, f, mat, vIdx); 
+                    dibujar(); 
+                };
+            }
+        } else { 
+            td.innerText = "-"; td.style.opacity = "0.3"; 
+        }
+        tr.appendChild(td);
+    });
+
+    table.appendChild(tr); 
+    return table;
+}
+
+
+
+
+function toggleFavorito(event, idT, esAsignada, mat, vIdx) {
+    // 1. BLOQUEO DE PROPAGACIÓN
+    // Esto evita que el clic llegue a la celda (tdInfo) y abra el modal de edición
+    if (event) {
+        event.stopPropagation(); 
+        if (event.preventDefault) event.preventDefault();
+    }
+
+    // 2. ACTUALIZAR EN EL POOL GENERAL (rawTiendas)
+    // Buscamos la tienda maestra para cambiarle el estado
+    const tiendaPool = rawTiendas.find(x => x.id === idT);
+    if (!tiendaPool) return; // Si no existe, salimos
+
+    // Cambiamos el estado (si era true pasa a false, y viceversa)
+    tiendaPool.favorito = !tiendaPool.favorito;
+
+    // 3. SINCRONIZAR CON LA FLOTA (Camiones)
+    // Recorremos todas las asignaciones para que la estrella "viaje" con el camión
+    for (let matricula in asignaciones) {
+        asignaciones[matricula].forEach(viaje => {
+            if (viaje.t && Array.isArray(viaje.t)) {
+                viaje.t.forEach(item => {
+                    if (item.idT === idT) {
+                        item.favorito = tiendaPool.favorito;
+                    }
+                });
+            }
+        });
+    }
+
+    console.log(`Marcar/quitar la ESTRELLA`);
+
+    // 4. REFRESCAR INTERFAZ
+    // Volvemos a dibujar para que la estrella cambie de blanco a amarillo pálido (#fff9c4)
+    dibujar();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// A. FUNCIÓN DE VALIDACIÓN (SILENCIOSA)
+function comprobarTiendaEnPoolCompleta(idTienda) {
+for (let matricula in asignaciones) {
+for (let viaje of asignaciones[matricula]) {
+// Verifica si hay cualquier palet de esta tienda en la flota
+const asignada = viaje.t.some(it => it.idT === idTienda && Number(it.p) > 0);
+if (asignada) return false;
+}
+}
+return true;
+}
+
+
+
+
+
+// EDITOR DE TIENDAS desde pool, lápiz azul
+function abrirModalEdicionGlobal(idTienda) {
+    const tienda = rawTiendas.find(t => t.id === idTienda);
+    if (!tienda) return;
+
+    if (!comprobarTiendaEnPoolCompleta(idTienda)) {
+        alert("No se puede editar: Hay palets de esta tienda ya asignados a camiones.");
+        return;
+    }
+
+    const vAnt = { S: tienda.S, C: tienda.C, F: tienda.F };
+
+    const overlay = document.createElement('div');
+    overlay.id = 'modal-edicion-global';
+    overlay.style = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); display: flex; align-items: center;
+        justify-content: center; z-index: 9999; font-family: sans-serif;
+    `;
+
+    const modal = document.createElement('div');
+    modal.style = `
+        background: #f4f4f4; padding: 20px; border-radius: 8px;
+        width: 350px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        border: 1px solid #ccc; color: #333;
+    `;
+
+    // Función auxiliar interna para el redondeo a 0.5
+    // Esta función permite que el usuario escriba tranquilo y corrige al terminar
+    const scriptRedondeo = "this.value = this.value.replace(',', '.'); let n = parseFloat(this.value); if(!isNaN(n)) this.value = (Math.round(n * 2) / 2);";
+
+    modal.innerHTML = `
+        <h3 style="margin-top:0; color:#444; border-bottom:1px solid #ddd; padding-bottom:10px;">
+            <i class="fas fa-store"></i> [${tienda.codigo}] ${tienda.nombre}
+        </h3>
+        <p style="font-size:0.85em; color:#666; margin-bottom:15px;">Ajuste global de palets (Totales)</p>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-weight:bold; margin-bottom:4px;">Seco (Original: ${tienda.seco_original || 0})</label>
+            <input type="text" id="edit-S" value="${tienda.S}" 
+                onblur="${scriptRedondeo}"
+                style="width:100%; padding:8px; border:1px solid #bbb; border-radius:4px;">
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-weight:bold; margin-bottom:4px;">Charcu (Original: ${tienda.charcu_original || 0})</label>
+            <input type="text" id="edit-C" value="${tienda.C}" 
+                onblur="${scriptRedondeo}"
+                style="width:100%; padding:8px; border:1px solid #bbb; border-radius:4px;">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-weight:bold; margin-bottom:4px;">FyV (Original: ${tienda.fyv_original || 0})</label>
+            <input type="text" id="edit-F" value="${tienda.F}" 
+                onblur="${scriptRedondeo}"
+                style="width:100%; padding:8px; border:1px solid #bbb; border-radius:4px;">
+        </div>
+
+        <div style="display:flex; justify-content: flex-end; gap: 10px;">
+            <button id="btn-cancel-edit" style="padding:8px 15px; cursor:pointer; background:#ddd; border:none; border-radius:4px;">Cancelar</button>
+            <button id="btn-save-edit" style="padding:8px 15px; cursor:pointer; background:#2ecc71; color:white; border:none; border-radius:4px; font-weight:bold;">Guardar Cambios</button>
+        </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    document.getElementById('btn-cancel-edit').onclick = () => document.body.removeChild(overlay);
+
+    document.getElementById('btn-save-edit').onclick = () => {
+        // Al guardar, nos aseguramos de convertir las comas a puntos antes de leer el número
+        const leerValor = (id) => {
+            let val = document.getElementById(id).value.replace(',', '.');
+            return parseFloat(val) || 0;
+        };
+
+        const nS = leerValor('edit-S');
+        const nC = leerValor('edit-C');
+        const nF = leerValor('edit-F');
+
+        console.log(`%c[EDICIÓN GLOBAL] Tienda: ${tienda.nombre} (${tienda.fecha})`, "color: #2ecc71; font-weight: bold;");
+        console.log(`   -> Seco:   ${vAnt.S} -> ${nS}`);
+        console.log(`   -> Charcu: ${vAnt.C} -> ${nC}`);
+        console.log(`   -> FyV:    ${vAnt.F} -> ${nF}`);
+
+        if (typeof guardarCambiosGlobales === 'function') {
+            guardarCambiosGlobales(idTienda, nS, nC, nF);
+        }
+        
+        document.body.removeChild(overlay);
+    };
+}
+
+
+
+
+
+
+
+// C. FUNCIÓN DE DATOS (ACTUALIZACIÓN Y COMPARACIÓN CONTRA EXCEL)
+function guardarCambiosGlobales(idT, s, c, f) {
+    const tienda = rawTiendas.find(t => t.id === idT);
+    if (!tienda) {
+        console.error("Tienda no encontrada:", idT);
+        return;
+    }
+
+    // 1. ACTUALIZAMOS LAS CANTIDADES REALES (Las que usa dibujar y render)
+    // Usamos S, C y F porque así es como las busca tu función 
+    tienda.S = Number(s);
+    tienda.C = Number(c);
+    tienda.F = Number(f);
+
+    // 2. LA COMPARACIÓN PARA EL ASTERISCO
+    // No hace falta crear variables modSeco, la función  
+    // ya compara t.S contra t.seco_original automáticamente al dibujar.
+    
+    console.log(`Guardado en ${tienda.nombre}: S:${tienda.S}, C:${tienda.C}, F:${tienda.F}`);
+
+    // 3. REFRESCAMOS LA UI
+    // Ahora, al llamar a dibujar(), este leerá los nuevos valores de tienda.S, C y F
+    dibujar();
+}
+
+
+
+function renderRetorno(r, context) {
+    console.log(`Dentro de renderRetorno()`);
+    
+    const d = document.createElement('div');
+    d.className = 'retorno-item';
+    
+    // ESTILOS VISUALES
+    d.style.fontSize = "0.75em";
+    d.style.fontWeight = "bold";
+    d.style.display = "flex";
+    d.style.justifyContent = "space-between";
+    d.style.alignItems = "center";
+    d.style.padding = "4px 8px";
+    d.style.marginBottom = "3px";
+    d.style.borderRadius = "4px";
+    d.style.background = "#ffeaa7"; 
+    d.style.border = "1px solid #fdcb6e";
+    d.style.whiteSpace = "nowrap";
+    d.style.overflow = "hidden";
+    d.style.cursor = "pointer"; // Cambiado a pointer para indicar que es clicable
+
+    d.innerHTML = `
+        <div style="display: flex; flex-direction: column; width: 100%;">
+            <div style="font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${r.proveedor}
+            </div>
+            <div style="font-size: 1.1em; opacity: 0.8; margin-top: 2px;">
+                Ped: ${r.pedido || '-'} <span style="background: rgba(0,0,0,0.1); padding: 0 4px; border-radius: 3px; margin-left: 5px;">${r.palets}P</span>
+            </div>
+        </div>
+    `;
+
+    // --- LÓGICA DE CLIC SEGÚN CONTEXTO ---
+    d.onclick = (e) => {
+        e.stopPropagation();
+        
+        const esCamion = Array.isArray(context); // Si context es array, viene de un viaje
+        
+        if (esCamion) {
+            // ACCIÓN: QUITAR DEL CAMIÓN (Tu lógica original)
+            console.log(`%c [Acción] Quitando retorno -> ${r.proveedor}`, "color: #c0392b; font-weight: bold;");
+            if (typeof quitarRetorno === 'function') {
+                quitarRetorno(r.id); 
+                dibujar(); 
+            }
+        } else {
+            // ACCIÓN: ASIGNACIÓN DIRECTA (Nuevo sistema)
+            console.log(`%c [Acción] Abriendo Asignación Directa para: ${r.proveedor}`, "color: #2ecc71; font-weight: bold;");
+            if (typeof abrirModalAsignacionDirecta === 'function') {
+                abrirModalAsignacionDirecta(r.id, 'RETORNO');
+            }
+        }
+    };
+
+    // --- HABILITAR ARRASTRE (DRAG & DROP) ---
+    d.draggable = true;
+    d.ondragstart = e => {
+        const origen = Array.isArray(context) ? 'CAMION' : 'POOL';
+        
+        console.log(`%c [Drag Start] RETORNO: ${r.proveedor} (ID: ${r.id}) desde ${origen}`, "color: #d35400; font-weight: bold;");
+
+        e.dataTransfer.setData("tipo", "RETORNO");
+        e.dataTransfer.setData("id", String(r.id));
+        e.dataTransfer.setData("origen", origen);
+        
+        setTimeout(() => { d.style.opacity = "0.5"; }, 0);
+    };
+
+    d.ondragend = () => { d.style.opacity = "1"; };
+    
+    return d;
+}
+
+
+
+
+
+
+
+
+
+function dibujar() {
+
+    console.log(`Dentro de dibujar()`);
+
+    // 0. BLOQUE DE SEGURIDAD (LIMPIEZA DE EVENTOS PREVIOS)
+    const elementosDraggables = document.querySelectorAll('[draggable="true"], .viaje-header, .drop-zone, .col-info, .cond-item, .rem-item');
+    elementosDraggables.forEach(el => {
+        el.ondragstart = null;
+        el.ondragover = null;
+        el.ondrop = null;
+        el.onclick = null;
+    });
+
+    // 1. CAPTURA DE BÚSQUEDA Y LIMPIEZA DEL POOL DE TIENDAS
+    const busq = normalizar(document.getElementById('filtro-nombre').value);
+    const pL = document.getElementById('pool-list'); 
+    pL.innerHTML = '';
+    let pPend = 0; // Contador de palets pendientes
+
+    // 2. FILTRADO Y ORDENACIÓN ESPECIAL DEL POOL TIENDAS (ZONA > CÓDIGO > FECHA)
+    const tiendasOrdenadas = [...rawTiendas].sort((a, b) => {
+        const zonaA = String(a.zona || "").toUpperCase().trim();
+        const zonaB = String(b.zona || "").toUpperCase().trim();
+        if (zonaA !== zonaB) return zonaA.localeCompare(zonaB);
+
+        const codA = String(a.codigo || "").trim();
+        const codB = String(b.codigo || "").trim();
+        if (codA.length !== codB.length) return codA.length - codB.length;
+
+        const numA = parseInt(codA, 10) || 0;
+        const numB = parseInt(codB, 10) || 0;
+        if (numA !== numB) return numA - numB;
+
+        return String(a.fecha || "").localeCompare(String(b.fecha || ""));
+    });
+
+    // 3. RENDERIZADO DEL POOL DE TIENDAS
+    tiendasOrdenadas.forEach(t => {
+        const match = t.nombreNorm.includes(busq) || t.codigo.includes(busq) || t.fecha.includes(busq);
+        if(busq !== "" && !match) return; 
+
+        const sEnCamiones = obtenerPaletsAsignados(t.id, 'S');
+        const cEnCamiones = obtenerPaletsAsignados(t.id, 'C');
+        const fEnCamiones = obtenerPaletsAsignados(t.id, 'F');
+
+        const sDisp = Math.max(0, (Number(t.S) || 0) - sEnCamiones);
+        const cDisp = Math.max(0, (Number(t.C) || 0) - cEnCamiones);
+        const fDisp = Math.max(0, (Number(t.F) || 0) - fEnCamiones);
+        
+        if(sDisp > 0.01 || cDisp > 0.01 || fDisp > 0.01) {
+            const tTemp = { ...t, S: sDisp, C: cDisp, F: fDisp }; 
+            
+            const nodoTienda = renderTablaTienda(tTemp, 'POOL', false, "", null);
+            
+            const tdInfo = nodoTienda.querySelector('.col-info');
+            if (tdInfo) {
+                tdInfo.style.position = "relative";
+                tdInfo.style.paddingRight = "90px"; 
+
+                const estiloBase = "position: absolute; top: 50%; transform: translateY(-50%); color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 15px; z-index: 50; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);";
+
+                const btnEditar = document.createElement('div');
+                btnEditar.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                btnEditar.style = estiloBase + "background: #3498db; border: 1px solid #2980b9; right: 45px;";
+                btnEditar.title = "Editar tienda";
+                btnEditar.onclick = (e) => { e.stopPropagation(); abrirModalEdicionGlobal(t.id); };
+
+                const btnDirecto = document.createElement('div');
+                btnDirecto.innerHTML = '<i class="fas fa-truck"></i>';
+                btnDirecto.style = estiloBase + "background: #2ecc71; border: 1px solid #27ae60; right: 5px;";
+                btnDirecto.title = "Asignar toda la tienda";
+                btnDirecto.onclick = (e) => { e.stopPropagation(); abrirModalAsignacionDirecta(t.id, 'TIENDA'); };
+
+                tdInfo.appendChild(btnEditar);
+                tdInfo.appendChild(btnDirecto);
+            }
+
+            pL.appendChild(nodoTienda); 
+            pPend += (sDisp + cDisp + fDisp); 
+        }
+    });
+
+    // 4. FILTRADO POOL RETORNOS
+    const pRList = document.getElementById('pool-retorno-list'); pRList.innerHTML = '';
+    rawRetornos.forEach(r => { 
+        if(!estaAsigRet(r.id)) { 
+            if(busq === "" || normalizar(r.proveedor).includes(busq)) { 
+                pRList.appendChild(renderRetorno(r, 'POOL')); 
+                pPend += r.palets; 
+            } 
+        } 
+    });
+
+
+
+
+// 5. ZONA FLOTA (CAMIONES Y VIAJES) -> MANTIENE ORDEN DEL EXCEL, NO DISP AL FINAL
+    const fZ = document.getElementById('flota-zone'); fZ.innerHTML = '';
+    let maxV = 0; 
+
+    // Ordenamos enviando los NO DISP al final, pero si tienen el mismo estado,
+    // devolvemos 0 para mantener exactamente el orden del Excel
+    const flotaOrdenada = [...rawFlota].sort((a, b) => {
+        const aNoDisp = (a.estado === 'NO DISP') ? 1 : 0;
+        const bNoDisp = (b.estado === 'NO DISP') ? 1 : 0;
+        return aNoDisp - bNoDisp;
+    });
+
+    flotaOrdenada.forEach(c => {
+        const asig = asignaciones[c.matricula] || [];
+        const coincideMatricula = normalizar(c.matricula).includes(busq);
+        
+        let camVisible = (busq === "" || coincideMatricula || asig.some(v => v.t.some(it => { 
+            const tR = rawTiendas.find(x => x.id === it.idT); 
+            return tR && (tR.nombreNorm.includes(busq) || tR.codigo.includes(busq)); 
+        })));
+        
+        if(!camVisible) return; 
+        if(asig.length > maxV) maxV = asig.length; 
+
+        const colE = coloresEmpresas[c.empresa] || {bg:"#eee", tx:"#000"};
+        
+        const card = document.createElement('div'); 
+        card.className = 'camion-card' + (c.estado === 'NO DISP' ? ' no-disp' : '');
+        
+        card.innerHTML = `
+            <div class="camion-header">
+                <div class="header-left">
+                    <span class="mat-badge" style="background:${colE.bg}; color:${colE.tx}">${c.matricula}</span>
+                    <span class="emp-badge" style="background:${colE.bg}; color:${colE.tx}">${c.empresa}</span>
+                    ${c.estado !== 'NO DISP' ? `<button class="btn-add-inline" style="width:30px; height:30px; font-size:1.5em; display:inline-flex; align-items:center; justify-content:center;" onclick="addViaje('${c.matricula}')">+</button>` : ''}
+                </div>
+            </div>`;
+
+        if (c.estado === 'NO DISP') {
+            fZ.appendChild(card); 
+            return;
+        }
+
+        asig.forEach((via, vIdx) => {
+            const totalP = (via.t.reduce((a, b) => a + b.p, 0) + via.ret.reduce((a, b) => a + b.palets, 0));
+            const capT = c.capacidad + via.capR; 
+
+            const tieneTiendaBuscada = via.t.some(it => {
+                const tR = rawTiendas.find(x => x.id === it.idT);
+                return tR && (tR.nombreNorm.includes(busq) || tR.codigo.includes(busq));
+            });
+
+            if (busq !== "" && !coincideMatricula && !tieneTiendaBuscada) return; 
+            
+            const keyViaje = `${c.matricula}-${vIdx}`;
+            const estaOculto = viajesOcultos[keyViaje];
+            const esSobrecap = totalP > (capT + 0.01); 
+            
+            const bgColor = esSobrecap ? "#b30000" : "#FFB6C1"; 
+            const colorTexto = esSobrecap ? "#ffffff" : "#000000"; 
+            const borderHeader = esSobrecap ? "2px solid #ff0000" : "1px solid #ccc";
+
+            const vDiv = document.createElement('div'); 
+            vDiv.className = 'viaje-container';
+
+            vDiv.innerHTML = `
+              <div class="viaje-header" ondrop="dropAsigGeneral(event,'${c.matricula}',${vIdx})" ondragover="allow(event)" 
+                style="display: flex; align-items: stretch; height: 35px; padding: 0 5px; background: ${bgColor}; border: ${borderHeader}; gap: 5px; margin-bottom: 2px; border-radius: 4px; box-sizing: border-box;">
+                
+                    <div class="v-label" style="display: flex; align-items: center; justify-content: center; font-size: 1.5em; min-width: 100px; background: ${bgColor}; color: ${colorTexto}; font-weight: bold;">
+                        V${vIdx+1} (${totalP.toFixed(1)}/${capT})
+                    </div>
+                    
+                    <div class="drop-box" style="flex: 1; height: 100%; background: white; border: 1px solid #999; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 1.1em; border-radius: 4px; padding: 0; box-sizing: border-box;">
+                        ${via.c ? `<div class="badge-asig" style="background:var(--success); color:white; width:100%; height:calc(100% - 2px); display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; font-size: 1.2em; "onclick="quitarAsig('${c.matricula}',${vIdx},'c')">${via.c}</div>` : '<span style="color:#aaa;">COND</span>'}
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 0 5px;">
+                        <i class="fas fa-pencil-alt" style="font-size: 2em; cursor: pointer; color: ${colorTexto};" onclick="reducir('${c.matricula}', ${vIdx})" title="Editar viaje"></i>
+                        <i class="fas ${estaOculto ? 'fa-eye-slash' : 'fa-eye'}" style="font-size: 2em; cursor: pointer; color: ${estaOculto ? (esSobrecap ? '#ccc' : '#666') : colorTexto};" onclick="toggleVisibilidadViaje('${c.matricula}', ${vIdx})" title="Mostrar/Ocultar tiendas"></i>
+                    </div>
+                    
+                    <div class="drop-box" style="flex: 1; height: 100%; background: white; border: 1px solid #999; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 1.1em; border-radius: 4px; padding: 0; box-sizing: border-box;">
+                        ${via.r ? `<div class="badge-asig" style="background:var(--info); color:white; width:100%; height:calc(100% - 2px); display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; font-size: 1.2em;  "onclick="quitarAsig('${c.matricula}',${vIdx},'r')">${via.r}</div>` : '<span style="color:#aaa;">REM</span>'}
+                    </div>
+              </div>`;
+
+            if (!estaOculto) {
+                const dz = document.createElement('div');
+                dz.className = 'drop-zone';
+                dz.style.minHeight = "30px";
+                dz.setAttribute('ondrop', `dropAsigGeneral(event,'${c.matricula}',${vIdx})`); 
+                dz.setAttribute('ondragover', 'allow(event)');
+
+                [...new Set(via.t.map(i => i.idT))].forEach(idT => {
+                    const tiendaInfo = rawTiendas.find(x => x.id === idT);
+                    if (tiendaInfo) {
+                        dz.appendChild(renderTablaTienda(tiendaInfo, via.t, false, c.matricula, vIdx));
+                    }
+                });
+                via.ret.forEach(it => {
+                    dz.appendChild(renderRetorno(it, via.ret));
+                });
+                vDiv.appendChild(dz);
+            }
+            card.appendChild(vDiv);
+        });
+        fZ.appendChild(card);
+    });
+
+
+
+
+    // 6. ACTUALIZACIÓN DE TABLA RESUMEN DINÁMICA
+    const tRes = document.getElementById('tabla-resumen-dinamica');
+    let numColumnasViajes = Math.max(maxV, 2); 
+    
+    let h = `<thead><tr><th style="width: 100px;">MATRÍC.</th><th style="width: 100px;">SOBRECAP.</th>`;
+    for(let i=1; i<=numColumnasViajes; i++) { h += `<th>V${i}</th>`; }
+    h += `</tr></thead><tbody>`;
+
+    rawFlota.forEach(c => {
+        const asig = asignaciones[c.matricula] || [];
+        const existeSobrecap = asig.some(v => {
+            const cargaTotal = (v.t.reduce((a, b) => a + (Number(b.p) || 0), 0) + v.ret.reduce((a, b) => a + (Number(b.palets) || 0), 0));
+            const capMax = (Number(c.capacidad) || 0) + (Number(v.capR) || 0);
+            return cargaTotal > (capMax + 0.01);
+        });
+        
+        const estiloSobrecap = existeSobrecap ? 'style="background-color: #ffcccc; color: #cc0000; font-weight: bold; text-align: center; border: 2px solid red;"' : 'style="text-align: center;"';
+        
+        h += `<tr><td style="font-weight: bold;">${c.matricula}</td><td ${estiloSobrecap}>${existeSobrecap ? "SI" : "NO"}</td>`;
+        
+        asig.forEach(v => { h += `<td>${zonasRes(v.t)}</td>`; });
+        for(let i = asig.length; i < numColumnasViajes; i++) { h += `<td>-</td>`; }
+        h += `</tr>`;
+    });
+    tRes.innerHTML = h + `</tbody>`;
+
+   // 7. POOL CONDUCTORES -> ORDENACIÓN DE INACTIVOS AL FINAL
+    const pC = document.getElementById('pool-cond-list'); pC.innerHTML = '';
+    
+    // Creamos una copia ordenada de los conductores
+    const conductoresOrdenados = [...rawConductores].sort((a, b) => {
+        const aInactivo = (a.estado === "BAJA" || a.estado === "VACACIONES") ? 1 : 0;
+        const bInactivo = (b.estado === "BAJA" || b.estado === "VACACIONES") ? 1 : 0;
+        
+        // Mandamos los inactivos (1) al final
+        if (aInactivo !== bInactivo) {
+            return aInactivo - bInactivo;
+        }
+        // Si tienen la misma disponibilidad, ordenamos por orden alfabético de nombre
+        return a.nombre.localeCompare(b.nombre);
+    });
+
+    conductoresOrdenados.forEach(c => {
+        const inactivo = (c.estado === "BAJA" || c.estado === "VACACIONES");
+        const d = document.createElement('div'); 
+        d.className = 'pool-item cond-item' + (inactivo ? " inactivo" : "");
+        
+        let vCount = 0; 
+        for(let m in asignaciones) asignaciones[m].forEach(v => { if(v.c === c.nombre) vCount++; });
+        
+        d.innerHTML = `<span>${c.nombre}${inactivo ? ` (${c.estado})` : ""}</span> <span>${vCount}</span>`;
+        
+        if(!inactivo) { 
+            d.draggable = true; 
+            d.ondragstart = e => { 
+                console.log(`%c[DRAG START] CONDUCTOR: ${c.nombre}`, "color: #3498db; font-weight: bold;");
+                e.dataTransfer.setData("tipo", "CONDUCTOR"); 
+                e.dataTransfer.setData("id", c.nombre); 
+            }; 
+            d.style.cursor = "pointer"; 
+            d.onclick = () => { abrirModalAsignacionDirecta(c.nombre, 'CONDUCTOR'); };
+        } else {
+            d.style.cursor = "not-allowed";
+        }
+        pC.appendChild(d);
+    });
+
+
+
+ // 8. POOL REMOLQUES -> ORDENACIÓN DE REMOLQUES NO DISP AL FINAL
+    const pRm = document.getElementById('pool-rem-list'); pRm.innerHTML = '';
+    
+    // Creamos una copia ordenada de los remolques
+    const remolquesOrdenados = [...rawRemolques].sort((a, b) => {
+        const aBloqueado = (a.estado === "NO DISP") ? 1 : 0;
+        const bBloqueado = (b.estado === "NO DISP") ? 1 : 0;
+        
+        // Enviamos los bloqueados (1) al final
+        if (aBloqueado !== bBloqueado) {
+            return aBloqueado - bBloqueado;
+        }
+        // Si coinciden en disponibilidad, orden alfabético/numérico por código
+        return a.codigo.localeCompare(b.codigo);
+    });
+
+    remolquesOrdenados.forEach(r => {
+        const d = document.createElement('div');
+        const bloqueado = (r.estado === "NO DISP");
+        d.className = 'pool-item rem-item' + (bloqueado ? ' rem-bloqueado' : '');
+        
+        d.innerHTML = `<span>${r.codigo}</span> <span>${r.capacidad}</span>`;
+        
+        if (!bloqueado) {
+            d.draggable = true; 
+            d.ondragstart = e => { 
+                console.log(`%c[DRAG START] REMOLQUE: ${r.codigo}`, "color: #f39c12; font-weight: bold;");
+                e.dataTransfer.setData("tipo", "REMOLQUE"); 
+                e.dataTransfer.setData("id", r.codigo); 
+                e.dataTransfer.setData("cap", r.capacidad); 
+            }; 
+            d.style.cursor = "pointer";
+            d.onclick = () => { abrirModalAsignacionDirecta(r.codigo, 'REMOLQUE'); };
+        } else {
+            d.draggable = false; d.style.cursor = "not-allowed";
+        }
+        pRm.appendChild(d);
+    });
+
+
+
+    // 9. ACTUALIZACIÓN DE TOTALES PENDIENTES
+    document.getElementById('msg-pendientes').innerText = `${pPend.toFixed(1)} Pend.`;
+    
+    if (typeof calcAire === "function") calcAire();
+    
+    document.querySelectorAll('.col-info').forEach(el => { el.setAttribute('draggable', 'true'); });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Variable para saber si estamos en modo "ocultar todo" o "mostrar todo"
+let modoOcultarTodo = false;
+
+function toggleTodosLosViajes() {
+    modoOcultarTodo = !modoOcultarTodo; // Cambiamos el estado global
+    
+    
+    // Recorremos la flota y sus viajes para marcar cada "llave"
+    rawFlota.forEach(c => {
+        const asig = asignaciones[c.matricula] || [];
+        asig.forEach((viaje, vIdx) => {
+            const key = `${c.matricula}-${vIdx}`;
+            viajesOcultos[key] = modoOcultarTodo;
+        });
+    });
+
+    // Actualizamos el texto del botón y redibujamos
+    const btn = document.getElementById('btn-toggle-todos');
+    if (btn) {
+        btn.innerHTML = modoOcultarTodo ? 
+            '<i class="fas fa-eye"></i> MOSTRAR TODO' : 
+            '<i class="fas fa-eye-slash"></i> OCULTAR TODO';
+    }
+    
+    console.log(`Ocultar/mostrar TODO`);
+    dibujar();
+}
+
+
+
+// --- NUEVAS VARIABLES Y FUNCIONES PARA OCULTAR VIAJES ---
+let viajesOcultos = {}; // Variable global que persiste
+
+function toggleVisibilidadViaje(mat, vIdx) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    //const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    const key = `${mat}-${vIdx}`;
+    // Si estaba oculto lo muestra, si estaba visible lo oculta
+    viajesOcultos[key] = !viajesOcultos[key]; 
+    
+    const estado = viajesOcultos[key] ? "OCULTADO" : "MOSTRADO";
+    console.log(`%c [Visibilidad] Viaje ${mat} V${vIdx+1} -> ${estado}`, "color: #2980b9; font-weight: bold;");
+
+    
+    dibujar(); // Refresca la pantalla para aplicar el cambio
+}
+
+
+
+
+
+
+
+function obtenerPaletsAsignados(idTienda, familia) {
+    let total = 0;
+    if (!asignaciones) return 0;
+    
+    // Recorremos cada matrícula en el objeto global de asignaciones
+    for (let mat in asignaciones) {
+        if (!Array.isArray(asignaciones[mat])) continue;
+
+        asignaciones[mat].forEach(viaje => {
+            // Verificamos que el viaje tenga el array 't' de tiendas/ítems
+            if (viaje.t && Array.isArray(viaje.t)) {
+                viaje.t.forEach(it => {
+                    // Filtramos por ID de tienda y por la familia específica (S, C o F)
+                    if (it.idT === idTienda && it.f === familia) {
+                        // Sumamos la cantidad de palets 'p', asegurando que sea numérico
+                        total += Number(it.p) || 0;
+                    }
+                });
+            }
+        });
+    }
+    
+    return total;
+}
+
+
+
+    
+
+
+
+
+
+
+function dropAsigGeneral(e, mat, vIdx) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO AL INICIO DEL DROP
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+     
+     // cambio de césar
+              console.log("[DROP DEBUG]", {  mat,vIdx,
+          tipo: e.dataTransfer?.getData("tipo"),
+          id: e.dataTransfer?.getData("id"),
+          fam: e.dataTransfer?.getData("fam"),
+          origen: e.dataTransfer?.getData("origen"),
+          cap: e.dataTransfer?.getData("cap")
+          });
+
+
+
+    e.preventDefault();
+    const tipo = e.dataTransfer.getData("tipo");
+    const idEntidad = e.dataTransfer.getData("id") || e.dataTransfer.getData("val");
+
+    // 1. GESTIÓN DE TIENDAS
+    if (tipo === "TIENDA" || tipo === "TIENDA_FULL") {
+        const tiendaObj = rawTiendas.find(t => t.id == idEntidad);
+        const nombreTienda = tiendaObj ? tiendaObj.nombre : idEntidad;
+        const codTienda = tiendaObj ? tiendaObj.codigo : "S/C";
+        
+        if (typeof dropTienda === "function") dropTienda(e, mat, vIdx);
+        
+        // LOG CON CRONO
+        console.log(   `%c[Drop] TIENDA: ${nombreTienda} (${codTienda}) -> Camión: ${mat} | V${vIdx + 1}`, "color: #27ae60; font-weight: bold;border: 1px solid #27ae60; padding: 2px 5px; border-radius: 3px;");
+          return; 
+    }
+
+   // 2. GESTIÓN DE RETORNOS
+    if (tipo === "RETORNO") {
+        const idRet = idEntidad;
+        const origen = e.dataTransfer.getData("origen"); // <--- LEEMOS EL ORIGEN
+
+        // --- VALIDACIÓN DE SEGURIDAD ---
+        if (origen === "CAMION") {
+            console.warn(`%c [BLOQUEO] Intento de mover retorno ${idRet} entre camiones`, "color: red; font-weight: bold;");
+            alert("No se puede mover un retorno directamente de un camión a otro. Devuélvelo al pool primero.");
+            return; // Bloqueamos la operación
+        }
+
+        const rObj = rawRetornos.find(r => r.id == idRet);
+        
+        if (rObj) {
+            const yaExiste = asignaciones[mat][vIdx].ret.some(x => x.id == idRet);
+            if (!yaExiste) {
+                asignaciones[mat][vIdx].ret.push(rObj);
+                console.log(`%c [Drop] RETORNO: ${rObj.proveedor} -> Camión: ${mat} | V${vIdx+1}`, "color: #d35400; font-weight: bold;");
+            }
+        }
+        dibujar();
+        return;
+    }  
+
+    // --- VALIDACIÓN: ESTADO DEL CAMIÓN ---
+    const camion = rawFlota.find(c => c.matricula === mat);
+    if (camion && camion.estado === "NO DISP") {
+        // WARN CON CRONO
+        console.warn(` [Bloqueo] Camión ${mat} NO DISPONIBLE`, "color: red; font-weight: bold;");
+        alert(`OPERACIÓN DENEGADA: El camión ${mat} está marcado como NO DISP.`);
+        return;
+    }
+
+
+    // 3. GESTIÓN DE CONDUCTOR Y REMOLQUE
+    if (tipo === "CONDUCTOR") {
+        asignaciones[mat][vIdx].c = idEntidad; 
+        // LOG CON CRONO
+        console.log(`%c [Drop] CONDUCTOR: ${idEntidad} -> Camión: ${mat} | V${vIdx+1}`, "color: #3498db; font-weight: bold;");
+    } 
+    else if (tipo === "REMOLQUE") {
+        const cap = parseFloat(e.dataTransfer.getData("cap"));
+        const rem = rawRemolques.find(r => r.codigo === idEntidad);
+        
+        if (rem && rem.estado === "NO DISP") {
+            // WARN CON CRONO
+            console.warn(` [Bloqueo] Remolque ${idEntidad} NO DISPONIBLE`, "color: red; font-weight: bold;");
+            alert("Este remolque está NO DISP y no puede asignarse.");
+            return; 
+        }
+        
+        asignaciones[mat][vIdx].r = idEntidad;
+        asignaciones[mat][vIdx].capR = cap;
+        // LOG CON CRONO
+        console.log(`%c [Drop] REMOLQUE: ${idEntidad} (Cap: ${cap}) -> Camión: ${mat} | V${vIdx+1}`, "color: #f39c12; font-weight: bold;");
+    }
+
+    dibujar();
+}
+          
+
+        
+
+
+function dropTienda(e, mat, vIdx) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    e.preventDefault();
+    console.log(`Dentro de droptienda()`);
+
+    
+    const cam = rawFlota.find(c => c.matricula === mat);
+    if (cam && cam.estado === 'NO DISP') {
+        console.warn(` [Bloqueo] Intento de drop en camión NO DISP: ${mat}`, "color: red; font-weight: bold;");
+        return;
+    }
+
+    const origen = e.dataTransfer.getData("origen");
+    if (origen === 'CAMION') {
+          console.warn("🚫 BLOQUEADO: No puedes mover tiendas entre camiones. Pásala al Pool primero.");
+          alert("Operación no permitida: Las tiendas deben volver al pool antes de reasignarlas.");
+    return;
+    }
+
+
+    const tipo = e.dataTransfer.getData("tipo");
+    const idRecibido = e.dataTransfer.getData("id");
+
+    // 2. Lógica según el tipo de elemento arrastrado
+    if (tipo === "TIENDA_FULL" || tipo === "TIENDA") {
+        
+        const t = rawTiendas.find(x => String(x.id) === String(idRecibido));
+        
+        if (!t) {
+            console.error(` Error: No se encontró la tienda con ID: ${idRecibido}`, "color: red;");
+            return;
+        }
+
+        if (tipo === "TIENDA_FULL") {
+            console.log(`%c [DROP FULL] Arrastrando ${t.nombre} (${t.fecha}).`, "color: #2ecc71; font-weight: bold;");
+            
+            ['S', 'C', 'F'].forEach(f => {
+                const asignado = obtenerPaletsAsignados(t.id, f);
+                const disponible = Math.max(0, (Number(t[f]) || 0) - asignado);
+
+                if (disponible > 0.01) { 
+                    moverItem(t.id, f, mat, vIdx, disponible, t.zona);
+                }
+            });
+
+        } else if (tipo === "TIENDA") {
+            const f = e.dataTransfer.getData("fam");
+            const asignado = obtenerPaletsAsignados(t.id, f);
+            const disponible = Math.max(0, (Number(t[f]) || 0) - asignado);
+
+            console.log(`%c [DROP FAM] Arrastrando ${f} de ${t.nombre}. Cant: ${disponible}`, "color: #27ae60;");
+
+            if (disponible > 0.01) {
+                moverItem(t.id, f, mat, vIdx, disponible, t.zona);
+            }
+        }
+
+    } else if (tipo === "RETORNO") {
+        const r = rawRetornos.find(x => String(x.id) === String(idRecibido));
+        if (!r) return;
+
+        devolverRetorno(r.id);
+        
+        if (asignaciones[mat] && asignaciones[mat][vIdx]) {
+            asignaciones[mat][vIdx].ret.push(r);
+            console.log(`%c [DROP RETORNO] ${r.proveedor} añadido a ${mat}`, "color: #d35400;");
+        }
+    }
+
+    console.log(`%c Drop finalizado. Refrescando...`, "color: #7f8c8d; font-style: italic;");
+    dibujar();
+}
+
+
+
+
+
+
+
+
+function moverItem(id, f, mat, vIdx, p, z) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    console.log(`Dentro de moverItem()`);
+    const via = asignaciones[mat][vIdx];
+    
+    // 1. Buscamos la tienda en la memoria global para sacar su nombre
+    const tiendaOriginal = rawTiendas.find(x => x.id === id);
+    const nombreTienda = tiendaOriginal ? tiendaOriginal.nombre : "";
+
+    const itemExistente = via.t.find(x => x.idT === id && x.f === f);
+
+    if (itemExistente) {
+        itemExistente.p += p;
+        itemExistente.nombre = nombreTienda; 
+    } else {
+        // 2. AÑADIMOS EL NOMBRE AQUÍ
+        via.t.push({
+            idT: id, 
+            nombre: nombreTienda, 
+            f: f, 
+            p: p, 
+            z: z
+        });
+    }
+
+    // LOG DE CONFIRMACIÓN DE MOVIMIENTO
+    console.log(`%c [Memoria] Movido: ${nombreTienda} (${f}) -> ${mat} V${vIdx+1} (${p} palets)`, "color: #16a085; font-size: 0.9em;");
+}
+
+
+
+
+
+
+function addViaje(mat) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    asignaciones[mat].push({c:"", r:"", capR:0, t:[], ret:[]}); 
+    
+    // LOG CON CRONO Y MATRÍCULA
+    console.log(`%c [Viaje] Añadido viaje al camión: ${mat}`, "color: #9b59b6; font-weight: bold;");
+    
+    dibujar(); 
+}
+        
+
+
+        
+        function allow(e) { e.preventDefault(); }
+        function estaAsigRet(id) { return Object.values(asignaciones).some(l => l.some(v => v.ret.some(x => x.id === id))); }
+     
+     
+     function zonasRes(tiendasViaje) {
+    if (!tiendasViaje || tiendasViaje.length === 0) return "-";
+    
+    // Obtenemos zonas únicas
+    let zUnicas = [...new Set(tiendasViaje.map(x => x.z))];
+    
+    // Las transformamos: VALENCIA -> VAL
+    return zUnicas.map(z => {
+        if (!z) return "";
+        return z.trim().substring(0, 4).toUpperCase(); // Corta a 3 dígitos y pone en mayúsculas
+    }).join(',');
+}   
+
+
+
+function devolverItem(idT, f, mat, vIdx) { 
+
+
+    console.log(`Dentro de devolverItem()`);
+
+    // 1. Validación de seguridad: Si no hay destino claro, abortamos para no perder datos
+    if (!mat || vIdx === undefined || vIdx === null) return;
+
+    // 2. Acceso a la asignación específica del camión en ENRUTADOR
+    if (!asignaciones[mat] || !asignaciones[mat][vIdx]) return;
+    
+    const viaje = asignaciones[mat][vIdx];
+    // --- NUEVA LÓGICA PARA LA FECHA ---
+    const t = rawTiendas.find(x => x.id === idT);
+    const fechaTienda = t ? t.fecha : "Sin Fecha";
+    
+    console.log(`Quitamos familia ${f} de tienda ${idT} (${fechaTienda}) del camión ${mat}.`); 
+    
+    // 3. Filtrado del array de tiendas del viaje
+    if (viaje.t && Array.isArray(viaje.t)) {
+        viaje.t = viaje.t.filter(x => {
+            // Si coincide el ID de tienda y la familia, lo excluimos del camión
+            if (x.idT === idT && x.f === f) { 
+                /* CAMBIO CLAVE: NO sumamos de vuelta a rawTiendas.
+                   La memoria se mantiene estática con el total original; 
+                   el Pool simplemente resta lo que 'obtenerPaletsAsignados' encuentre en los camiones.
+                */
+                return false; 
+            }
+            return true; 
+        });
+    }
+
+    // Nota: El refresco visual (dibujar()) se debe ejecutar tras esta llamada.
+}
+
+
+
+
+
+
+        function devolverRetorno(id) { 
+              console.log(`Dentro de devolverRetorno()`);
+
+          for(let m in asignaciones) asignaciones[m].forEach(v => v.ret = v.ret.filter(x => x.id !== id)); 
+          console.log(`Proceso de devolución finalizado para ID: ${id}`);         
+        
+        }
+
+
+
+function dropDevolverPool(e) {
+    e.preventDefault();
+
+                  console.log(`Dentro de dropDevolverPool()`);
+
+    const origen = e.dataTransfer.getData("origen");
+    if (origen === 'POOL') return;
+
+    const tipo = e.dataTransfer.getData("tipo");
+    const id = e.dataTransfer.getData("id");
+    const mat = e.dataTransfer.getData("matOrigen");
+    const vIdx = e.dataTransfer.getData("vIdxOrigen");
+
+    if (tipo === "TIENDA" || tipo === "TIENDA_FULL") {
+        const fam = e.dataTransfer.getData("fam");
+        if (tipo === "TIENDA_FULL") {
+            ['S','C','F'].forEach(f => devolverItem(id, f, mat, vIdx));
+        } else {
+            devolverItem(id, fam, mat, vIdx);
+        }
+    } else if (tipo === "RETORNO") {
+        quitarRetorno(id);
+    }
+    dibujar();
+}
+
+
+
+function quitarRetorno(id) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    console.log(`Dentro de quitarRetorno()`);
+
+
+    // Buscamos el retorno en el pool para tener su nombre en el log
+    const retOriginal = rawRetornos.find(r => r.id === id);
+    const nombreRet = retOriginal ? retOriginal.proveedor : id;
+
+    for (let m in asignaciones) {
+        asignaciones[m].forEach((v, vIdx) => {
+            const antes = v.ret.length;
+            v.ret = v.ret.filter(r => r.id !== id);
+            
+            // Si el tamaño del array cambió, es que lo hemos quitado de aquí
+            if (v.ret.length < antes) {
+                console.log(`%c [Retorno] Quitado: ${nombreRet} de ${m} (Viaje ${vIdx + 1})`, "color: #c0392b; font-weight: bold;");
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
+       function quitarAsig(mat, vIdx, campo) {
+    // Determinamos qué estamos quitando para el log
+
+
+    console.log(`Dentro de quitarAsig()`);
+
+    const tipo = (campo === 'c') ? "CONDUCTOR" : "REMOLQUE";
+    const valorPrevio = asignaciones[mat][vIdx][campo];
+    // Ejecutamos la limpieza
+    asignaciones[mat][vIdx][campo] = "";
+    if (campo === 'r') asignaciones[mat][vIdx].capR = 0;
+    // Log detallado
+    console.log(  `%cQUITADO: ${tipo} (${valorPrevio}) del Camión: ${mat} | Viaje: V${vIdx + 1}`,     "color: #27ae60;");
+
+    dibujar();
+}
+        
+
+       // --- BORRA TODO EL PLANIFICADOR CON CONFIRMACIÓN ---
+function vaciarTodo() { 
+    const respuesta = confirm("¿Estás seguro de que quieres vaciar todo el planificador? Las tiendas volverán al Pool.");
+
+    if (respuesta) {
+        for(let m in asignaciones) {
+            // ELIMINADO: Ya no recorremos v.t para sumar palets a tiendaOriginal.
+            // Si sumas aquí y luego vacías el viaje, el sistema cree que tienes el doble de carga.
+
+            // Simplemente reseteamos los viajes a su estado inicial vacío
+            asignaciones[m] = [ 
+                {c:"", r:"", capR:0, t:[], ret:[]}, 
+                {c:"", r:"", capR:0, t:[], ret:[]}, 
+                {c:"", r:"", capR:0, t:[], ret:[]} 
+            ]; 
+        }
+        
+        // Al ejecutar dibujar(), como asignaciones[m].t está vacío, 
+        // el cálculo (Total - 0) dará el valor correcto.
+        dibujar(); 
+        console.log("Planificador vaciado con éxito en ENRUTADOR. Memoria limpia.");
+    } 
+}
+
+
+
+
+        function esRes(zN, zsA) { const nN = normalizar(zN); return zsA.some(zA => { const nA = normalizar(zA); return rawRestricciones.some(r => (r[0] === nN && r[1] === nA) || (r[0] === nA && r[1] === nN)); }); }
+
+
+
+
+
+
+
+                          function calcAire() { 
+                      let totAire = 0; 
+                      let sinCond = 0;
+                      let sobreCap = 0;
+
+                      rawFlota.forEach(c => { 
+                          // Solo contamos camiones que no estén bloqueados (DISP)
+                          if(c.estado !== 'NO DISP') {
+                              asignaciones[c.matricula].forEach(v => { 
+                                  const cargaTotal = v.t.reduce((a, b) => a + b.p, 0) + v.ret.reduce((a, b) => a + b.palets, 0); 
+                                  const capacidadActual = c.capacidad + v.capR;
+
+                                  if(cargaTotal > 0) {
+                                      // 1. Calcular Aire
+                                      totAire += Math.max(0, capacidadActual - cargaTotal); 
+                                      
+                                      // 2. Contar si falta conductor
+                                      if(!v.c) sinCond++;
+
+                                      // 3. Contar si supera capacidad
+                                      if(cargaTotal > capacidadActual) sobreCap++;
+                                  }
+                              });
+                          }
+                      }); 
+
+                      // Actualizar los textos en la interfaz
+                      document.getElementById('btn-aire-total').innerText = `ESPAC.DISP: ${totAire.toFixed(1)}`; 
+                      document.getElementById('btn-sin-conductor').innerText = `${sinCond} SIN COND.`;
+                      document.getElementById('btn-sobrecapacidad').innerText = `${sobreCap} SOBRECAP.`;
+
+                      // Opcional: Cambiar color si hay errores para que resalten
+                      document.getElementById('btn-sin-conductor').style.background = sinCond > 0 ? "#FF0000" : "#000000";
+                      document.getElementById('btn-sobrecapacidad').style.background = sobreCap > 0 ? "#FF0000" : "#000000";
+                  }
+
+
+
+
+
+
+
+
+    // --- MODAL DE CAMBIAR CANTIDAD DENTRO DEL CAMIÓN --
+    function reducir(mat, vIdx) {
+    editCurrent = { mat, vIdx };
+    const via = asignaciones[mat][vIdx];
+    const body = document.getElementById('modal-body');
+    body.innerHTML = '';
+
+    // Si el viaje no tiene tiendas, avisamos y salimos para no dar error
+    if (!via || !via.t || via.t.length === 0) {
+        body.innerHTML = '<p style="padding:20px; text-align:center;">Este viaje no tiene tiendas asignadas.</p>';
+        document.getElementById('modal-edit').style.display = 'flex';
+        return;
+    }
+
+    const idsT = [...new Set(via.t.map(x => x.idT))];
+    let html = `<table class="tabla-edit"><tr><th>Tienda</th><th>Seco</th><th>Charcu</th><th>FyV</th></tr>`;
+    
+    idsT.forEach(id => {
+        // 1. BÚSQUEDA MULTINIVEL CON PROTECCIÓN
+        let t = rawTiendas.find(x => x.id === id); 
+        
+        if (!t || (Number(t.S) === 0 && Number(t.C) === 0 && Number(t.F) === 0)) {
+            const itemEnViaje = via.t.find(x => x.idT === id);
+            const nombreEnViaje = itemEnViaje ? itemEnViaje.nombre : null;
+            
+            // Intento 2: Solo si tenemos nombre
+            if (nombreEnViaje) {
+                t = rawTiendas.find(x => x.nombre === nombreEnViaje);
+            }
+            
+            // Intento 3: Solo si hay nombre y tiene el formato esperado [COD] NOMBRE
+            if (!t && nombreEnViaje && nombreEnViaje.includes('[')) {
+                try {
+                    const codigo = nombreEnViaje.split(' ')[0].replace('[', '').replace(']', '');
+                    t = rawTiendas.find(x => x.codigo === codigo);
+                } catch (err) {
+                    console.warn("Error procesando código de tienda:", nombreEnViaje);
+                }
+            }
+        }
+
+        // --- PROTECCIÓN FINAL: Si la tienda sigue sin aparecer, creamos un objeto temporal 
+        // para que el modal NO salga en blanco y puedas ver qué falla.
+        if(!t) {
+            console.error("No se encontró la tienda para el ID:", id);
+            // Creamos un "t" de emergencia para no romper el bucle
+            t = { nombre: "Tienda Desconocida (ID: " + id + ")", S:0, C:0, F:0, id: id };
+        }
+
+        const totalS = Number(t.S) || 0;
+        const totalC = Number(t.C) || 0;
+        const totalF = Number(t.F) || 0;
+
+        const vS = via.t.find(x => x.idT === id && x.f === 'S')?.p || 0;
+        const vC = via.t.find(x => x.idT === id && x.f === 'C')?.p || 0;
+        const vF = via.t.find(x => x.idT === id && x.f === 'F')?.p || 0;
+
+        const otrosS = (typeof obtenerPaletsAsignados === 'function' ? obtenerPaletsAsignados(id, 'S') : 0) - vS;
+        const otrosC = (typeof obtenerPaletsAsignados === 'function' ? obtenerPaletsAsignados(id, 'C') : 0) - vC;
+        const otrosF = (typeof obtenerPaletsAsignados === 'function' ? obtenerPaletsAsignados(id, 'F') : 0) - vF;
+
+        const maxS = Math.max(vS, totalS - otrosS); 
+        const maxC = Math.max(vC, totalC - otrosC);
+        const maxF = Math.max(vF, totalF - otrosF);
+
+        const origS = t.seco_original || 0;
+        const origC = t.charcu_original || 0;
+        const origF = t.fyv_original || 0;
+
+        const codigoLimpio = t.codigo ? `[${t.codigo}] ` : "";
+        const fechaTienda = t.fecha ? ` ${t.fecha}` : "";
+
+
+        html += `<tr>
+            <td style="text-align:left">
+                <b style="font-size:1.1em;">${codigoLimpio}${t.nombre}${fechaTienda}</b><br>
+                <small style="color:blue; font-weight:bold">Memoria: ${totalS} / ${totalC} / ${totalF}</small>
+                <small style="color:red; font-weight:bold">Original: ${origS} / ${origC} / ${origF}</small>
+            </td>
+            // Cambia estas líneas en tu función reducir:
+            <td><input type="number" step="0.5" min="0" value="${vS}" data-id="${id}" data-f="S" max="${maxS}" onchange="valMax(this)" style="width:60px"></td>
+            <td><input type="number" step="0.5" min="0" value="${vC}" data-id="${id}" data-f="C" max="${maxC}" onchange="valMax(this)" style="width:60px"></td>
+            <td><input type="number" step="0.5" min="0" value="${vF}" data-id="${id}" data-f="F" max="${maxF}" onchange="valMax(this)" style="width:60px"></td>
+
+        </tr>`;
+    });
+    
+    html += `</table>`;
+    body.innerHTML = html;
+    document.getElementById('modal-edit').style.display = 'flex';
+}
+
+
+
+
+
+function valMax(input) {
+    let val = parseFloat(input.value);
+    const max = parseFloat(input.getAttribute('max'));
+
+    // 1. Evitar que supere el máximo permitido
+    if (val > max) {
+        val = max;
+    }
+
+    // 2. Forzar que siempre sea múltiplo de 0.5
+    // Esto redondea al 0.5 más cercano mientras el usuario escribe o al terminar
+    if (!isNaN(val)) {
+        val = Math.round(val * 2) / 2;
+    } else {
+        val = 0;
+    }
+
+    input.value = val;
+}
+
+
+// MODAL PARA EDITAR CANTIDAD DE UN CAMIÓN
+function cerrarModal() { document.getElementById('modal-edit').style.display = 'none'; }
+
+
+
+
+
+
+function NuevoConductor() {
+    let nombre = prompt("Introduce el nombre del nuevo conductor:");
+
+    if (nombre === null || nombre.trim() === "") {
+        return; 
+    }
+
+    // Pasamos el nombre a la función de guardado
+    agregarConductorAlPool(nombre.trim().toUpperCase());
+}
+
+
+// FUNCIÓN PARA INSERTAR EN RAWCONDUCTORES
+function agregarConductorAlPool(nuevoNombre) {
+
+    // Comprobamos si ya existe en el array de objetos
+    const existe = rawConductores.some(c => c.nombre === nuevoNombre);
+
+    if (existe) {
+        alert("Este conductor ya está en el pool.");
+        return;
+    }
+
+    // Añadimos el objeto al array siguiendo tu estructura
+    // He puesto "MANUAL" como empresa, pero puedes cambiarlo
+    rawConductores.push({
+        nombre: nuevoNombre,
+        empresa: "MANUAL",
+        id: "M-" + Date.now() // Generamos un ID único temporal
+    });
+    
+    console.log(`%c [Pool Conductor] Nuevo conductor añadido: ${nuevoNombre}`, "color: #2980b9; font-weight: bold;");
+
+    // Refrescamos para que aparezca en la lista
+    dibujar();
+}
+
+
+
+
+
+
+
+// Abre el formulario de añadir camión
+function NuevoCamion() {
+    document.getElementById('modal-nuevo-camion').style.display = 'flex';
+    document.getElementById('new-mat').focus();
+}
+
+// Cierra el formulario de camión y limpia inputs
+function cerrarModalNuevoCamion() {
+    document.getElementById('modal-nuevo-camion').style.display = 'none';
+    document.getElementById('new-mat').value = '';
+    document.getElementById('new-cap').value = '';
+    document.getElementById('new-emp').value = '';
+}
+
+
+
+
+
+// Crea el camión y lo añade a la flota
+function guardarNuevoCamion() {
+    const mat = document.getElementById('new-mat').value.trim().toUpperCase();
+    const cap = parseFloat(document.getElementById('new-cap').value);    
+    const emp = document.getElementById('new-emp').value.trim();
+
+    if (!mat || isNaN(cap) || !emp) {
+        alert("Por favor, rellena todos los campos correctamente.");
+        return;
+    }
+    
+    // Comprobamos la existencia comparando todo en mayúsculas
+    const existe = rawFlota.find(c => (c.mat || c.matricula || "").toUpperCase() === mat);
+
+    if (existe) {
+        alert("Esta matrícula ya existe.");
+        return;
+    }
+
+    // 1. Crear el objeto del camión
+    const nuevoCamion = {
+        mat: mat,
+        matricula: mat, 
+        capacidad: cap, 
+        empresa: emp,
+        estado: 'DISP',
+        viajes: [[], [], []]
+    };
+
+    // 2. CREAR LA ENTRADA EN ASIGNACIONES
+    asignaciones[mat] = [
+        { t: [], ret: [], c: null, r: null, capR: 0 },
+        { t: [], ret: [], c: null, r: null, capR: 0 },
+        { t: [], ret: [], c: null, r: null, capR: 0 }
+    ];
+
+    // 3. Añadir a la flota
+    rawFlota.push(nuevoCamion);
+
+    // --- NUEVO CONSOLE LOG ---
+    console.log(`%c[REGISTRO] Nuevo camión: ${mat} | Capacidad: ${cap}P | Empresa: ${emp}`, "color: #27ae60; font-weight: bold; border: 1px solid #27ae60; padding: 2px 5px; border-radius: 3px;");
+
+    // 4. Limpiar buscador para asegurar que se vea
+    document.getElementById('filtro-nombre').value = "";
+
+    // 5. Cerrar y redibujar
+    cerrarModalNuevoCamion();
+    dibujar(); 
+    
+    // Scroll para ir al nuevo camión
+    setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 100);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function añadirRemolqueManual() {
+    // 1. Inyectar Estilos (solo si no existen)
+    if (!document.getElementById('estilos-modal-remolque')) {
+        const style = document.createElement('style');
+        style.id = 'estilos-modal-remolque';
+        style.innerHTML = `
+            .modal-remolque-overlay {
+                position: fixed; top:0; left:0; width:100%; height:100%;
+                background: rgba(0,0,0,0.6); display:flex; align-items:center; 
+                justify-content:center; z-index:10000; font-family: sans-serif;
+            }
+            .modal-remolque-caja {
+                background: white; padding: 20px; border-radius: 12px;
+                width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            }
+            .modal-remolque-caja h3 { margin: 0 0 15px 0; color: #333; text-align: center; }
+            .modal-remolque-input {
+                width: 100%; padding: 10px; margin-bottom: 15px;
+                border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
+                font-size: 1rem;
+            }
+            .modal-remolque-label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #666; }
+            .modal-remolque-btns { display: flex; gap: 10px; }
+            .btn-rem-cancel { flex:1; padding: 10px; border:none; border-radius:6px; cursor:pointer; background:#eee; }
+            .btn-rem-confirm { flex:1; padding: 10px; border:none; border-radius:6px; cursor:pointer; background:#f39c12; color:white; font-weight:bold; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // 2. Crear estructura
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-remolque-overlay';
+    overlay.innerHTML = `
+        <div class="modal-remolque-caja">
+            <h3>Nuevo Remolque</h3>
+            <label class="modal-remolque-label">Código Remolque</label>
+            <input type="text" id="input-cod-rem" class="modal-remolque-input" placeholder="Ej: R1024">
+            <label class="modal-remolque-label">Capacidad (Palets)</label>
+            <input type="number" id="input-cap-rem" class="modal-remolque-input" step="0.5" placeholder="33.0">
+            <div class="modal-remolque-btns">
+                <button id="btn-cancel-rem" class="btn-rem-cancel">Cancelar</button>
+                <button id="btn-confirm-rem" class="btn-rem-confirm">Crear</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('input-cod-rem').focus();
+
+    // 3. Lógica
+    document.getElementById('btn-cancel-rem').onclick = () => overlay.remove();
+
+    document.getElementById('btn-confirm-rem').onclick = function() {
+        const cod = document.getElementById('input-cod-rem').value.trim().toUpperCase();
+        const capRaw = document.getElementById('input-cap-rem').value;
+        const cap = parseFloat(capRaw);
+
+        if (!cod || isNaN(cap)) {
+            alert("Rellena todos los campos correctamente.");
+            return;
+        }
+
+        // --- RESPETO A TUS VARIABLES: pool rawRemolques y propiedad codigo ---
+        const existe = rawRemolques.find(x => x.codigo === cod);
+        if (existe) {
+            alert(`El remolque ${cod} ya existe.`);
+            return;
+        }
+
+        // Ajuste a 0.5
+        const capacidadFinal = Math.round(cap * 2) / 2;
+
+        // Registro en tu Pool con tus claves: codigo, capacidad, estado
+        rawRemolques.push({ 
+            codigo: cod, 
+            capacidad: capacidadFinal, 
+            estado: "DISP" 
+        });
+
+        console.log(`%c[POOL REMOLQUES] Añadido: ${cod} (${capacidadFinal.toFixed(1)})`, "color: #f39c12; font-weight: bold;");
+
+        // Refrescar interfaz
+        if (typeof dibujar === 'function') dibujar();
+
+        overlay.remove();
+    };
+}
+
+
+
+
+
+function guardarREDUCIR() {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    //////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    const via = asignaciones[editCurrent.mat][editCurrent.vIdx];
+    const inputs = document.querySelectorAll('.tabla-edit input');
+    const tiendasProcesadas = new Set();
+
+    // LOG DE INICIO CON CRONO
+    console.log(`%c [EDITAR CAMIÓN] ${editCurrent.mat} - Nº Viaje ${editCurrent.vIdx + 1}`, "color: #3498db; font-weight: bold; border-left: 3px solid #3498db; padding-left: 5px;");
+
+    inputs.forEach(inp => {
+        const nuevaCant = parseFloat(inp.value) || 0;
+        const id = inp.dataset.id;
+        const fam = inp.dataset.f;
+        
+        const tiendaG = rawTiendas.find(x => x.id === id);
+        
+        if (tiendaG && !tiendasProcesadas.has(id)) {
+            const inpS = document.querySelector(`.tabla-edit input[data-id="${id}"][data-f="S"]`);
+            const inpC = document.querySelector(`.tabla-edit input[data-id="${id}"][data-f="C"]`);
+            const inpF = document.querySelector(`.tabla-edit input[data-id="${id}"][data-f="F"]`);
+
+            const valS = parseFloat(inpS?.value || 0);
+            const valC = parseFloat(inpC?.value || 0);
+            const valF = parseFloat(inpF?.value || 0);
+
+            // --- EL AJUSTE MAESTRO ---
+            if (valS > tiendaG.S || tiendaG.S === 0) tiendaG.S = valS;
+            if (valC > tiendaG.C || tiendaG.C === 0) tiendaG.C = valC;
+            if (valF > tiendaG.F || tiendaG.F === 0) tiendaG.F = valF;
+
+            tiendasProcesadas.add(id);
+        }
+
+        // Actualización del viaje (camión)
+        const index = via.t.findIndex(x => x.idT === id && x.f === fam);
+        if(nuevaCant > 0) {
+            if(index !== -1) {
+                via.t[index].p = nuevaCant;
+            } else {
+                const t = rawTiendas.find(x => x.id === id);
+                via.t.push({idT: id, nombre: t.nombre, f: fam, p: nuevaCant, z: t.zona});
+            }
+        } else if(index !== -1) {
+            via.t.splice(index, 1);
+        }
+    });
+
+    // LOG DE CIERRE CON CRONO
+    console.log(`%c Guardado de edición finalizado. Refrescando UI...`, "color: #2980b9; font-style: italic;");
+    
+    cerrarModal();
+    dibujar(); 
+}
+
+
+
+
+
+function confirmarPropuesta() {
+    console.log("Iniciando auto-enrutado: Priorizando Tiendas Completas en el mismo viaje...");
+
+    // 1. Preparamos el pool de datos agrupado por TIENDA completa
+    let poolTiendas = rawTiendas.map(t => {
+        const sDisp = t.S - obtenerPaletsAsignados(t.id, 'S');
+        const cDisp = t.C - obtenerPaletsAsignados(t.id, 'C');
+        const fDisp = t.F - obtenerPaletsAsignados(t.id, 'F');
+        
+        return {
+            id: t.id,
+            nombre: t.nombre,
+            z: t.zona,
+            familias: [
+                { f: 'S', v: sDisp > 0.01 ? sDisp : 0 },
+                { f: 'C', v: cDisp > 0.01 ? cDisp : 0 },
+                { f: 'F', v: fDisp > 0.01 ? fDisp : 0 }
+            ],
+            total: (sDisp > 0 ? sDisp : 0) + (cDisp > 0 ? cDisp : 0) + (fDisp > 0 ? fDisp : 0)
+        };
+    }).filter(t => t.total > 0);
+
+    // Ordenamos las tiendas de mayor a menor volumen total para optimizar espacio
+    poolTiendas.sort((a, b) => b.total - a.total);
+
+    const flotaDisp = rawFlota.filter(c => c.estado !== 'NO DISP');
+
+    flotaDisp.forEach(camion => {
+        asignaciones[camion.matricula].forEach(viaje => {
+            const capacidadMax = camion.capacidad + viaje.capR;
+
+            // --- FASE 1: METER TODAS LAS TIENDAS COMPLETAS QUE QUEPAN EN ESTE VIAJE ---
+            for (let i = 0; i < poolTiendas.length; i++) {
+                const tAct = poolTiendas[i];
+                const ocupacionActual = viaje.t.reduce((acc, item) => acc + item.p, 0);
+                
+                if ((ocupacionActual + tAct.total) <= capacidadMax && !esRes(tAct.z, viaje.t.map(x => x.z))) {
+                    
+                    // Metemos todas las familias de esta tienda
+                    tAct.familias.forEach(fam => {
+                        if (fam.v > 0) {
+                            viaje.t.push({
+                                idT: tAct.id,
+                                nombre: tAct.nombre,
+                                f: fam.f,
+                                p: fam.v,
+                                z: tAct.z
+                            });
+                        }
+                    });
+
+                    // Eliminamos la tienda del pool
+                    poolTiendas.splice(i, 1);
+                    i--; // Ajustamos el índice porque hemos quitado un elemento
+                    // NOTA: No hacemos 'return' ni 'break' para que siga intentando meter más tiendas en este viaje
+                }
+            }
+
+            // --- FASE 2: RELLENAR HUECOS RESTANTES CON FAMILIAS SUELTAS ---
+            for (let i = 0; i < poolTiendas.length; i++) {
+                const tAct = poolTiendas[i];
+                
+                for (let j = 0; j < tAct.familias.length; j++) {
+                    const fam = tAct.familias[j];
+                    if (fam.v <= 0) continue;
+
+                    const ocupacionActual = viaje.t.reduce((acc, item) => acc + item.p, 0);
+
+                    if ((ocupacionActual + fam.v) <= capacidadMax && !esRes(tAct.z, viaje.t.map(x => x.z))) {
+                        viaje.t.push({
+                            idT: tAct.id,
+                            nombre: tAct.nombre,
+                            f: fam.f,
+                            p: fam.v,
+                            z: tAct.z
+                        });
+                        
+                        tAct.total -= fam.v;
+                        fam.v = 0;
+                    }
+                }
+                
+                if (tAct.total <= 0.01) {
+                    poolTiendas.splice(i, 1);
+                    i--;
+                }
+            }
+        });
+    });
+
+    console.log("Auto-enrutado finalizado: Tiendas agrupadas por capacidad.");
+    dibujar();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+let datosTemporalesCarga = []; // Almacena lo que se va a cargar tras validar
+
+function importarNuevasRutas(event) {
+    // CAPTURAMOS EL TIEMPO DEL CRONÓMETRO
+    ////const tiempoCrono = document.getElementById('cronometro-planificacion')?.innerText || "00:00:00";
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // LOG DE INICIO DE IMPORTACIÓN
+    console.log(`%c [Excel] Iniciando importación de archivo: ${file.name}`, "color: #f1c40f; font-weight: bold; background: #2c3e50; padding: 2px 5px; border-radius: 3px;");
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        
+        // Convertimos a JSON (asumiendo cabeceras en la fila 1)
+        const filas = XLSX.utils.sheet_to_json(firstSheet);
+
+        // Log de éxito en la lectura
+        console.log(`%c [Excel] Lectura completada. Procesando ${filas.length} filas...`, "color: #f1c40f;");
+
+        analizarRutas(filas);
+    };
+    reader.readAsArrayBuffer(file);
+    event.target.value = ""; // Reset para permitir cargar el mismo archivo
+}
+
+
+
+
+
+
+function analizarRutas(filas) {
+    console.log("1. Inicio analizarRutas - Procesando estructura fija de Excel");
+    
+    const estilosZonasFijos = {
+        "MURCIA":      { bg: "#3399FF", tx: "#FFF" }, 
+        "VALENCIA":    { bg: "#FF9999", tx: "#000" }, 
+        "ALICANTE":    { bg: "#FF9900", tx: "#000" }, 
+        "CASTELLON":   { bg: "#00FF99", tx: "#000" }, 
+        "NOCTURNA":    { bg: "#808080", tx: "#FFF" }, 
+        "NORTE":       { bg: "#000000", tx: "#FFF" }, 
+        "SAN VICENTE": { bg: "#FF00FF", tx: "#FFF" }, 
+        "ALCOY":       { bg: "#FFFFFF", tx: "#000" }  
+    };
+
+    const duplicados = [];
+    const nuevos = [];
+    datosTemporalesCarga = []; 
+
+    try {
+        filas.forEach((fila) => {
+            // Obtenemos los valores en un array para asegurar la posición independientemente del nombre de la propiedad
+            // Posiciones: 0:codigo, 1:Tienda, 2:Seco, 3:Charcu, 4:FyV, 5:Fecha servicio, 6:zona
+            const v = Object.values(fila);
+
+            // Mapeo forzado por posición para evitar errores de lectura
+            const cod      = String(v[0] || "").trim();
+            const nombre   = String(v[1] || "").trim();
+            const valSeco  = Number(v[2]) || 0;
+            const valChar  = Number(v[3]) || 0; // Columna D -> Charcu
+            const valFyV   = Number(v[4]) || 0;
+            const fechaRaw = v[5];
+            const zonaRaw  = String(v[6] || "").toUpperCase().trim();
+
+            if (!cod && !nombre) return; // Saltar filas vacías
+
+            const fechaFormateada = formatearFechaExcel(fechaRaw);
+
+            const nuevaTienda = {
+                id: String(Date.now() + Math.random()), 
+                codigo: cod,
+                nombre: nombre,
+                nombreNorm: typeof normalizar === 'function' ? normalizar(nombre) : nombre.toLowerCase(),
+                // Asignación de familias
+                S: valSeco,
+                C: valChar, 
+                F: valFyV,
+                // Guardado de originales para comparativa y asteriscos
+                seco_original: valSeco,
+                charcu_original: valChar,
+                fyv_original: valFyV,
+                fecha: fechaFormateada, 
+                zona: zonaRaw,
+                favorito: false
+            };
+
+            // --- GESTIÓN DE ESTILOS DE ZONA ---
+            if (estilosZonasFijos[zonaRaw]) {
+                estilosZonas[zonaRaw] = estilosZonasFijos[zonaRaw];
+            } else if (!estilosZonas[zonaRaw] && zonaRaw !== "") {
+                estilosZonas[zonaRaw] = { bg: "#00FFFF", tx: "#333" };
+            }
+
+            // --- VERIFICACIÓN DE DUPLICADOS ---
+            const existe = rawTiendas.find(t => {
+                const codMatch = String(t.codigo) === String(nuevaTienda.codigo);
+                const fechaA = typeof limpiarFecha === 'function' ? limpiarFecha(t.fecha) : t.fecha;
+                const fechaB = typeof limpiarFecha === 'function' ? limpiarFecha(nuevaTienda.fecha) : nuevaTienda.fecha;
+                return codMatch && fechaA === fechaB;
+            });
+
+            if (existe) {
+              // AQUÍ SE ASIGNA LA ESTRELLA
+                existe.favorito = true; 
+                nuevaTienda.favorito = true;
+                duplicados.push({ anterior: existe, nuevo: nuevaTienda });
+            } else {
+                nuevos.push(nuevaTienda);
+            }
+            
+            datosTemporalesCarga.push(nuevaTienda);
+        });
+
+        console.log(`Procesado: ${nuevos.length} nuevos y ${duplicados.length} duplicados.`);
+        
+        if (typeof mostrarModalUnificado === 'function') {
+            mostrarModalUnificado(nuevos, duplicados);
+        }
+
+    } catch (error) {
+        console.error("ERROR en analizarRutas:", error);
+    }
+}
+
+
+
+
+
+function formatearFechaExcel(fechaRaw) {
+    if (!fechaRaw) return "S/F";
+    
+    // Si es número de Excel (ej: 45321)
+    if (typeof fechaRaw === 'number') {
+        const d = new Date((fechaRaw - 25569) * 86400 * 1000);
+        return `${d.getDate()}/${d.getMonth() + 1}`;
+    }
+    
+    // Si es un String (ej: "03/02/2026")
+    if (typeof fechaRaw === 'string') {
+        const partes = fechaRaw.split(/[-/]/);
+        if (partes.length >= 2) {
+            // Si empieza por año 2026-02-03
+            if (partes[0].length === 4) return `${parseInt(partes[2])}/${parseInt(partes[1])}`;
+            // Si es formato estándar 03/02/2026
+            return `${parseInt(partes[0])}/${parseInt(partes[1])}`;
+        }
+    }
+    return fechaRaw;
+}
+
+
+
+
+
+function mostrarModalUnificado(nuevos, duplicados) {
+    console.log("3. Intentando abrir modal...");
+    
+    const container = document.getElementById('tabla-cambios-container');
+    const modal = document.getElementById('modal-confirmar-cambios');
+
+    if (!container || !modal) {
+        console.error("4. ERROR: No se encontraron los IDs 'tabla-cambios-container' o 'modal-confirmar-cambios' en el HTML.");
+        return;
+    }
+
+    let html = `
+    <style>
+        .tabla-modal { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .tabla-modal th, .tabla-modal td { padding: 2px 8px; border-bottom: 1px solid #eee; text-align: left; }
+        .tabla-modal th { background: #f4f4f4; font-size: 0.85em; color: #666; }
+        .seccion-titulo { background: #333; color: white; padding: 8px 12px; font-weight: bold; margin-top: 15px; border-radius: 4px 4px 0 0; }
+        .val-new { color: #28a745; font-weight: bold; }
+        .val-upd { color: #007bff; font-weight: bold; }
+    </style>`;
+
+    if (nuevos.length > 0) {
+        html += `<div class="seccion-titulo">📦 NUEVAS TIENDAS A CARGAR (${nuevos.length})</div>
+        <table class="tabla-modal">
+            <thead><tr><th>Tienda</th><th>Fecha</th><th>Zona</th><th>Valores (S/C/F)</th></tr></thead>
+            <tbody>`;
+        nuevos.forEach(n => {
+            html += `<tr>
+                <td>${n.nombre}</td>
+                <td>${n.fecha}</td>
+                <td><small>${n.zona}</small></td>
+                <td class="val-new">${n.S} / ${n.C} / ${n.F}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+    }
+
+    if (duplicados.length > 0) {
+        html += `<div class="seccion-titulo" style="background: #dc3545;">⚠️ ACTUALIZAR EXISTENTES (${duplicados.length})</div>
+        <table class="tabla-modal">
+            <thead><tr><th>Tienda</th><th>Fecha</th><th>Anterior</th><th>Nuevo</th></tr></thead>
+            <tbody>`;
+        duplicados.forEach(d => {
+            html += `<tr>
+                <td>${d.anterior.nombre}</td>
+                <td>${d.anterior.fecha}</td>
+                <td style="color:#999;">${d.anterior.S}/${d.anterior.C}/${d.anterior.F}</td>
+                <td class="val-upd">${d.nuevo.S} / ${d.nuevo.C} / ${d.nuevo.F}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+    }
+
+    container.innerHTML = html;
+    modal.style.display = 'flex';
+    console.log("5. Modal visible ejecutado con éxito.");
+}
+
+
+
+function procesarCargaFinal() {
+    console.log("%c >>> CARGA: RESPETO AL MENOR + RESUMEN LIMPIO <<< ", "background: #2c3e50; color: white; font-weight: bold; padding: 5px;");
+
+    datosTemporalesCarga.forEach(nueva => {
+        const idx = rawTiendas.findIndex(t => 
+            t.codigo === nueva.codigo && 
+            limpiarFecha(t.fecha) === limpiarFecha(nueva.fecha)
+        );
+
+        if (idx !== -1) {
+            const tiendaExistente = rawTiendas[idx];
+            const idT = String(tiendaExistente.id);
+            
+            console.group(`Ajustando: ${nueva.codigo} - ${nueva.nombre}`);
+
+            ['S', 'C', 'F'].forEach(familia => {
+                const valorExcel = Math.round((Number(nueva[familia]) || 0) * 2) / 2;
+                
+                let instancias = [];
+                for (let mat in asignaciones) {
+                    asignaciones[mat].forEach((viaje, vIdx) => {
+                        viaje.t.forEach(item => {
+                            if (String(item.idT) === idT && item.f === familia) {
+                                instancias.push({ item, mat, vIdx });
+                            }
+                        });
+                    });
+                }
+
+                if (instancias.length > 0) {
+                    instancias.sort((a, b) => a.item.p - b.item.p);
+                    
+                    if (instancias.length === 1) {
+                        // Lógica de un solo camión: No absorbe más de lo que ya tenía
+                        const actualEnCamion = instancias[0].item.p;
+                        if (valorExcel >= actualEnCamion) {
+                            instancias[0].item.p = actualEnCamion; 
+                        } else {
+                            instancias[0].item.p = valorExcel;
+                        }
+                    } else {
+                        // Lógica de varios camiones: Respeto al menor
+                        const menor = instancias[0];
+                        const restoInstancias = instancias.slice(1);
+
+                        if (valorExcel <= menor.item.p) {
+                            menor.item.p = valorExcel;
+                            restoInstancias.forEach(ins => ins.item.p = 0);
+                        } else {
+                            let sobrante = valorExcel - menor.item.p;
+                            restoInstancias.forEach((ins, i) => {
+                                if (i === restoInstancias.length - 1) {
+                                    ins.item.p = Math.round(sobrante * 2) / 2;
+                                } else {
+                                    ins.item.p = 0;
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Actualización Pool Maestro
+            tiendaExistente.S = nueva.S;
+            tiendaExistente.C = nueva.C;
+            tiendaExistente.F = nueva.F;
+            tiendaExistente.seco_original = nueva.seco_original;
+            tiendaExistente.charcu_original = nueva.charcu_original;
+            tiendaExistente.fyv_original = nueva.fyv_original;
+            
+            // --- LOG DE VERIFICACIÓN CON ESPACIOS ---
+            let totalCam = { S: 0, C: 0, F: 0 };
+            for (let mat in asignaciones) {
+                asignaciones[mat].forEach(v => {
+                    v.t.forEach(it => {
+                        if (String(it.idT) === idT) totalCam[it.f] += it.p;
+                    });
+                });
+            }
+
+            const pS = Math.max(0, tiendaExistente.S - totalCam.S);
+            const pC = Math.max(0, tiendaExistente.C - totalCam.C);
+            const pF = Math.max(0, tiendaExistente.F - totalCam.F);
+               
+              console.log(
+                `%cTienda: ${tiendaExistente.codigo} ${tiendaExistente.nombre}\n` +
+                `Excel          S: ${Number(tiendaExistente.S).toFixed(1)}  C: ${Number(tiendaExistente.C).toFixed(1)}  F: ${Number(tiendaExistente.F).toFixed(1)}\n` +
+                `Total Camiones S: ${totalCam.S.toFixed(1)}  C: ${totalCam.C.toFixed(1)}  F: ${totalCam.F.toFixed(1)}\n` +
+                `En Pool        S: ${pS.toFixed(1)}  C: ${pC.toFixed(1)}  F: ${pF.toFixed(1)}`,
+                "color: #8e44ad; font-weight: bold; line-height: 1.4;"
+            );
+
+            
+            console.groupEnd();
+        } else {
+               // --- LOG PARA TIENDAS TOTALMENTE NUEVAS ---
+                 console.log(
+                `%cNUEVA TIENDA: ${nueva.codigo} ${nueva.nombre}\n` +
+                `Excel          S: ${Number(nueva.S).toFixed(1)}  C: ${Number(nueva.C).toFixed(1)}  F: ${Number(nueva.F).toFixed(1)}\n` +
+                `Total Camiones S: 0.0  C: 0.0  F: 0.0\n` +
+                `En Pool        S: ${Number(nueva.S).toFixed(1)}  C: ${Number(nueva.C).toFixed(1)}  F: ${Number(nueva.F).toFixed(1)}`,
+                "color: #27ae60; font-weight: bold; line-height: 1.4;"
+            );
+            rawTiendas.push(nueva);
+        }
+    });
+
+    // Limpieza de registros a 0
+    for (let mat in asignaciones) {
+        asignaciones[mat].forEach(viaje => {
+            viaje.t = viaje.t.filter(item => (Number(item.p) || 0) > 0.01);
+        });
+    }
+
+    cerrarModalCambios();
+    datosTemporalesCarga = [];
+    dibujar();
+}
+
+
+
+
+
+
+function cerrarModalCambios() {
+    document.getElementById('modal-confirmar-cambios').style.display = 'none';
+}
+
+
+
+
+
+
+
+
+function limpiarFecha(f) {
+    if (typeof f !== 'string') return f;
+    // Convierte "03/02" en "3/2" para comparar sin errores de ceros
+    return f.split('/').map(n => parseInt(n, 10)).join('/');
+}
+
+// Por si acaso no tienes la de normalizar nombres
+function normalizar(texto) {
+    return texto ? texto.toString().toLowerCase().trim() : "";
+}
+
+
+
+
+
+
+
+// SALE ORDENADO POR CAMIÓN Y POR VIAJE.
+function exportarExcel() {
+    const data = [];
+
+    // 1. PROCESAR TODAS LAS TIENDAS (Pool y Asignaciones)
+    rawTiendas.forEach(t => {
+        let totalCargadoS = 0, totalCargadoC = 0, totalCargadoF = 0;
+
+        Object.keys(asignaciones).forEach(mat => {
+            asignaciones[mat].forEach((viaje, index) => {
+                const itemsTiendaEnEsteViaje = viaje.t.filter(it => it.idT === t.id && Number(it.p) > 0);
+                
+                if (itemsTiendaEnEsteViaje.length > 0) {
+                    let seco = 0, charcu = 0, fyv = 0;
+                    itemsTiendaEnEsteViaje.forEach(item => {
+                        if(item.f === 'S') { seco += item.p; totalCargadoS += item.p; }
+                        if(item.f === 'C') { charcu += item.p; totalCargadoC += item.p; }
+                        if(item.f === 'F') { fyv += item.p; totalCargadoF += item.p; }
+                    });
+
+                    data.push({
+                        "FECHA": t.fecha || "",
+                        "ZONA": t.zona || "",
+                        "CODIGO": t.codigo || "",
+                        "TIENDA / PROVEEDOR": t.nombre || "",
+                        "PEDIDO": "",
+                        "SECO": seco,
+                        "CHARCU": charcu,
+                        "FyV": fyv,
+                        "PAL_RETORNO": 0,
+                        "MATRÍCULA": mat,
+                        "CONDUCTOR": viaje.c || "-",
+                        "VIAJE": "V" + (index + 1),
+                        "LLEVA REMOLQUE": (Number(viaje.capR) > 0) ? "SI" : "NO",
+                        "CÓDIGO REM.": viaje.r || "-"
+                    });
+                }
+            });
+        });
+
+        const restoS = (t.origS || t.S || 0) - totalCargadoS;
+        const restoC = (t.origC || t.C || 0) - totalCargadoC;
+        const restoF = (t.origF || t.F || 0) - totalCargadoF;
+
+        if (restoS > 0.01 || restoC > 0.01 || restoF > 0.01) {
+            data.push({
+                "FECHA": t.fecha || "",
+                "ZONA": t.zona || "",
+                "CODIGO": t.codigo || "",
+                "TIENDA / PROVEEDOR": t.nombre || "",
+                "PEDIDO": "PENDIENTE",
+                "SECO": Math.max(0, restoS),
+                "CHARCU": Math.max(0, restoC),
+                "FyV": Math.max(0, restoF),
+                "PAL_RETORNO": 0,
+                "MATRÍCULA": "POOL",
+                "CONDUCTOR": "-",
+                "VIAJE": "-",
+                "LLEVA REMOLQUE": "NO",
+                "CÓDIGO REM.": "-"
+            });
+        }
+    });
+
+    // 2. PROCESAR RETORNOS ASIGNADOS A CAMIONES
+    Object.keys(asignaciones).forEach(mat => {
+        asignaciones[mat].forEach((viaje, index) => {
+            if (viaje.ret) {
+                viaje.ret.forEach(r => {
+                    if (Number(r.palets) > 0) {
+                        data.push({
+                            "FECHA": "", "ZONA": "", "CODIGO": "",
+                            "TIENDA / PROVEEDOR": r.proveedor || r.nombre || "RETORNO",
+                            "PEDIDO": r.pedido || "-", 
+                            "SECO": 0, "CHARCU": 0, "FyV": 0,
+                            "PAL_RETORNO": Number(r.palets),
+                            "MATRÍCULA": mat,
+                            "CONDUCTOR": viaje.c || "-",
+                            "VIAJE": "V" + (index + 1),
+                            "LLEVA REMOLQUE": (Number(viaje.capR) > 0) ? "SI" : "NO",
+                            "CÓDIGO REM.": viaje.r || "-"
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    // 3. PROCESAR RETORNOS PENDIENTES (POOL)
+    rawRetornos.forEach(r => {
+        if (!estaAsigRet(r.id)) { 
+            data.push({
+                "FECHA": "", "ZONA": "", "CODIGO": "",
+                "TIENDA / PROVEEDOR": r.proveedor || r.nombre || "RETORNO PEND.",
+                "PEDIDO": r.pedido || "PENDIENTE", 
+                "SECO": 0, "CHARCU": 0, "FyV": 0,
+                "PAL_RETORNO": Number(r.palets),
+                "MATRÍCULA": "POOL",
+                "CONDUCTOR": "-",
+                "VIAJE": "-",
+                "LLEVA REMOLQUE": "NO",
+                "CÓDIGO REM.": "-"
+            });
+        }
+    });
+
+    // --- BLOQUE DE ORDENACIÓN CRÍTICO ---
+    data.sort((a, b) => {
+        // 1. El POOL siempre al final
+        if (a["MATRÍCULA"] === "POOL" && b["MATRÍCULA"] !== "POOL") return 1;
+        if (a["MATRÍCULA"] !== "POOL" && b["MATRÍCULA"] === "POOL") return -1;
+
+        // 2. Ordenar por Matrícula
+        if (a["MATRÍCULA"] < b["MATRÍCULA"]) return -1;
+        if (a["MATRÍCULA"] > b["MATRÍCULA"]) return 1;
+
+        // 3. Si es la misma matrícula, ordenar por Viaje (extraemos el número de "V1", "V2"...)
+        const vA = parseInt(a["VIAJE"].replace("V", "")) || 0;
+        const vB = parseInt(b["VIAJE"].replace("V", "")) || 0;
+        return vA - vB;
+    });
+
+    // Generar el archivo
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "ENRUTADOR");
+    XLSX.writeFile(wb, "ENRUTADOR.xlsx");
+}
+
+
+
+function abrirModalAsignacionDirecta(idEntidad, tipo) { 
+    // tipo puede ser: 'TIENDA', 'CONDUCTOR', 'REMOLQUE' o 'RETORNO'
+    
+    let nombreMostrar = "";
+    let tituloModal = "";
+
+    // 1. Buscamos los datos según el tipo
+    if (tipo === 'TIENDA') {
+        const t = rawTiendas.find(x => x.id === idEntidad);
+        nombreMostrar = t ? `${t.codigo} - ${t.nombre}` : idEntidad;
+        tituloModal = "Asignar Tienda";
+    } else if (tipo === 'CONDUCTOR') {
+        nombreMostrar = idEntidad; // El ID es el nombre
+        tituloModal = "Asignar Conductor";
+    } else if (tipo === 'REMOLQUE') {
+        nombreMostrar = idEntidad; // El ID es el código
+        tituloModal = "Asignar Remolque";
+    } else if (tipo === 'RETORNO') {
+        // --- NUEVA LÓGICA PARA RETORNO ---
+        const r = rawRetornos.find(x => x.id === idEntidad);
+        nombreMostrar = r ? `RET: ${r.proveedor} (${r.palets} pal.)` : idEntidad;
+        tituloModal = "Asignar Retorno";
+    }
+
+    // 2. Generar opciones de camiones
+    let opcionesCamion = `<option value="">-- Selecciona Camión --</option>`;
+    rawFlota.forEach(c => {
+        if (c.estado !== 'NO DISP') {
+            opcionesCamion += `<option value="${c.matricula}">${c.matricula} - ${c.empresa || "OTROS"}</option>`;
+        }
+    });
+
+    const modalHTML = `
+        <div id="modalAsignarDirecto" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+            <div style="background:white; padding:20px; border-radius:8px; width:350px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-family: Arial, sans-serif;">
+                <h3 style="margin-top:0; color:#333; border-bottom:2px solid #2ecc71; padding-bottom:10px;">${tituloModal}</h3>
+                <p style="font-size:14px; color:#666;"><b>Elemento:</b> ${nombreMostrar}</p>
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">Camión / Matrícula:</label>
+                    <select id="selMatriculaDirecta" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" 
+                            onchange="actualizarComboViajesDirecto(this.value)">
+                        ${opcionesCamion}
+                    </select>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">Número de Viaje:</label>
+                    <select id="selViajeDirecto" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                        <option value="">Selecciona camión primero...</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button onclick="cerrarModalDirecto()" style="padding:8px 15px; background:#95a5a6; color:white; border:none; border-radius:4px; cursor:pointer;">Cancelar</button>
+                    <button onclick="confirmarAsignacionDirecta('${idEntidad}', '${tipo}')" style="padding:8px 15px; background:#2ecc71; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Si ya existe un modal abierto, lo quitamos para evitar duplicados
+    const modalPrevio = document.getElementById('modalAsignarDirecto');
+    if (modalPrevio) modalPrevio.remove();
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+
+
+
+
+
+
+
+
+
+
+// Función auxiliar para rellenar los viajes según la matrícula elegida
+function actualizarComboViajesDirecto(matricula) {
+    const selViaje = document.getElementById('selViajeDirecto');
+    selViaje.innerHTML = '';
+
+    if (!matricula || !asignaciones[matricula]) {
+        selViaje.innerHTML = '<option value="">Selecciona camión...</option>';
+        return;
+    }
+
+    // Recorremos los viajes que tiene asignada esa matrícula
+    asignaciones[matricula].forEach((viaje, index) => {
+        // Calculamos el total de palets (tiendas + retornos)
+        const totalPalets = (viaje.t.reduce((a, b) => a + b.p, 0) + viaje.ret.reduce((a, b) => a + b.palets, 0));
+        
+        // Obtenemos el conductor de este viaje específico (o "Sin Cond." si está vacío)
+        const conductorViaje = viaje.c ? viaje.c : "Sin Cond.";
+
+        // Añadimos la opción incluyendo el nombre del conductor
+        selViaje.innerHTML += `<option value="${index}">
+            Viaje ${index + 1} - ${conductorViaje} (Actual: ${totalPalets.toFixed(1)} palets)
+        </option>`;
+    });
+}
+
+
+function cerrarModalDirecto() {
+    const modal = document.getElementById('modalAsignarDirecto');
+    if (modal) modal.remove();
+}
+
+
+
+
+
+function confirmarAsignacionDirecta(idEntidad, tipo) {
+    const matricula = document.getElementById('selMatriculaDirecta').value;
+    const vIdx = parseInt(document.getElementById('selViajeDirecto').value);
+
+    // 1. Validaciones
+    if (!matricula) { alert("Selecciona un camión."); return; }
+    if (isNaN(vIdx)) { alert("Selecciona un viaje."); return; }
+
+    const viaje = asignaciones[matricula][vIdx];
+    let nombreParaLog = idEntidad; // Valor por defecto (ID o Nombre)
+
+    // 2. Lógica de asignación (Tu código original + Retorno)
+    if (tipo === 'TIENDA') {
+        const tienda = rawTiendas.find(t => t.id === idEntidad);
+        if (tienda) nombreParaLog = `${tienda.codigo} - ${tienda.nombre}`;
+        
+        const familias = ['S', 'C', 'F'];
+        familias.forEach(f => {
+            const disp = Math.max(0, (Number(tienda[f]) || 0) - obtenerPaletsAsignados(idEntidad, f));
+            if (disp > 0.01) {
+                viaje.t.push({ idT: tienda.id, f: f, p: disp });
+            }
+        });
+    } 
+    else if (tipo === 'CONDUCTOR') {
+        viaje.c = idEntidad; 
+        nombreParaLog = idEntidad; // Ya es el nombre
+    } 
+    else if (tipo === 'REMOLQUE') {
+        const remObj = rawRemolques.find(r => r.codigo === idEntidad);
+        viaje.r = idEntidad;
+        viaje.capR = remObj ? remObj.capacidad : 0;
+        nombreParaLog = idEntidad; // Ya es el código del remolque
+    }
+    else if (tipo === 'RETORNO') {
+        const ret = rawRetornos.find(r => r.id === idEntidad);
+        if (ret) {
+            viaje.ret.push({ ...ret }); 
+            nombreParaLog = ret.proveedor;
+        }
+    }
+
+    // 3. Finalizar
+    cerrarModalDirecto();
+
+    // CONSOLE LOG DETALLADO
+    console.log(`%c [Asignación CLIC] ${tipo}: ${nombreParaLog} -> ${matricula} V${vIdx + 1}`, "color: #2ecc71; font-weight: bold; border-left: 4px solid #2ecc71; padding-left: 5px;");
+
+    // Persistencia si la usas
+    if (typeof guardarEstado === "function") guardarEstado(); 
+    
+    dibujar(); 
+}
+
+
+
+
+
+    
+      // PEGA EL CÓDIGO AQUÍ:
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = ''; // Chrome requiere que se asigne un valor vacío o texto
+        });
+    
+
+    
+    
+    </script>
+</body>
+</html>
